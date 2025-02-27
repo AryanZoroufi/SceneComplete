@@ -1,0 +1,12 @@
+[submodule "BrushNet"]
+	path = BrushNet
+	url = https://github.com/TencentARC/BrushNet
+[submodule "modules/FoundationPose"]
+	path = modules/FoundationPose
+	url = https://github.com/NVlabs/FoundationPose
+[submodule "modules/BrushNet"]
+	path = modules/BrushNet
+	url = https://github.com/TencentARC/BrushNet
+[submodule "modules/InstantMesh"]
+	path = modules/InstantMesh
+	url = https://github.com/TencentARC/InstantMesh
