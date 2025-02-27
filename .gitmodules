@@ -10,3 +10,6 @@
 [submodule "modules/InstantMesh"]
 	path = modules/InstantMesh
 	url = https://github.com/TencentARC/InstantMesh
+[submodule "modules/Grounded-Segment-Anything"]
+	path = modules/Grounded-Segment-Anything
+	url = https://github.com/IDEA-Research/Grounded-Segment-Anything
