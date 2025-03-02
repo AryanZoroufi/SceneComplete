@@ -167,5 +167,5 @@ Desktop.ini
 *.key
 
 # Specific folders that need to be ignored
-data/test_data
+data/*
 modules/weights

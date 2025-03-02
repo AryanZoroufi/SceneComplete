@@ -82,8 +82,8 @@ if __name__ == '__main__':
                         help='Path to the depth image')
     parser.add_argument('--prompts_filepath', type=str, required=True,
                         help='Path to the file containing text prompts (one per line)')
-    # parser.add_argument('--prompt_mask_mapping_filepath', type=str, required=True,
-    #                     help='Where to write the prompt-to-mask mapping output')
+    parser.add_argument('--prompt_mask_mapping_filepath', type=str, required=True,
+                        help='Where to write the prompt-to-mask mapping output')
     parser.add_argument('--save_dirpath', type=str, required=True,
                         help='Directory to save output images/masks')
     
@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
     os.makedirs(args.save_dirpath, exist_ok=True)
 
-    # Read prompts from file
+    # 0. Read prompts from file
     with open(args.prompts_filepath, 'r') as f:
         prompts = [line.strip() for line in f.readlines()]
 
@@ -131,15 +131,15 @@ if __name__ == '__main__':
     inpaintings_dirpath = os.path.join(args.save_dirpath, 'sam_outputs')
     os.makedirs(inpaintings_dirpath, exist_ok=True)
 
-    # prompt_mask_mapping_lines = get_inpainting_input(
-    #     rgb_filepath=args.image_path,
-    #     segmentations_list_filtered=segmentations_list_filtered,
-    #     save_dirpath=inpaintings_dirpath,
-    #     resize_ratio=args.resize_ratio,
-    #     enlargement=args.enlargement,
-    #     depth=depth
-    # )
+    prompt_mask_mapping_lines = get_inpainting_input(
+        rgb_filepath=args.image_path,
+        segmentations_list_filtered=segmentations_list_filtered,
+        save_dirpath=inpaintings_dirpath,
+        resize_ratio=args.resize_ratio,
+        enlargement=args.enlargement,
+        depth=depth
+    )
 
-    # # 5. Write the prompt-to-mask mapping info to file
-    # with open(args.prompt_mask_mapping_filepath, 'w') as f:
-    #     f.write('\n'.join(prompt_mask_mapping_lines))
+    # 5. Write the prompt-to-mask mapping info to file
+    with open(args.prompt_mask_mapping_filepath, 'w') as f:
+        f.write('\n'.join(prompt_mask_mapping_lines))
