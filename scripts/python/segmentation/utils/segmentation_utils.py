@@ -172,6 +172,64 @@ def resize_foreground_padded(image, masked_image, ratio):
     new_mask = Image.fromarray(new_mask)
     return new_image, new_mask
 
+
+def resize_foreground_without_mask(image: Image.Image, ratio: float, DEBUG: float=False) -> Image.Image:
+    """
+    Takes in an RGBA image, crops out the non-alpha portion, and pads it to a square. 
+    Then, it resizes the image based on 'ratio', returning a new Image. 
+    """
+    image_array = np.array(image)  # shape (H, W, 4)
+    assert image_array.shape[-1] == 4, "Expected RGBA input image."
+
+    alpha_y, alpha_x = np.where(image_array[..., 3] > 0)
+    if alpha_y.size == 0 or alpha_x.size == 0:
+        # Edge case: no non-zero alpha
+        if DEBUG:
+            print("[DEBUG] No non-zero alpha found; returning original image.")
+        return image
+
+    y1, y2 = alpha_y.min(), alpha_y.max()
+    x1, x2 = alpha_x.min(), alpha_x.max()
+
+    # Crop the foreground (non-zero alpha)
+    fg = image_array[y1:y2, x1:x2]  # shape (cropH, cropW, 4)
+    if DEBUG:
+        print(f"[DEBUG] crop y1={y1}, y2={y2}, x1={x1}, x2={x2}, fg.shape={fg.shape}")
+
+    # 1) Pad to square
+    size = max(fg.shape[0], fg.shape[1])
+    pad_top    = (size - fg.shape[0]) // 2
+    pad_bottom = size - fg.shape[0] - pad_top
+    pad_left   = (size - fg.shape[1]) // 2
+    pad_right  = size - fg.shape[1] - pad_left
+
+    new_image = np.pad(
+        fg,
+        ((pad_top, pad_bottom), (pad_left, pad_right), (0, 0)),
+        mode="constant",
+        constant_values=0,
+    )
+    if DEBUG:
+        print(f"[DEBUG] after square pad => new_image.shape={new_image.shape}")
+
+    # 2) Compute final pad size based on ratio
+    new_size = int(new_image.shape[0] / ratio)
+    pad_top2    = (new_size - size) // 2
+    pad_bottom2 = new_size - size - pad_top2
+    pad_left2   = (new_size - size) // 2
+    pad_right2  = new_size - size - pad_left2
+
+    new_image = np.pad(
+        new_image,
+        ((pad_top2, pad_bottom2), (pad_left2, pad_right2), (0, 0)),
+        mode="constant",
+        constant_values=0,
+    )
+    if DEBUG:
+        print(f"[DEBUG] final shape after ratio pad => new_image.shape={new_image.shape}")
+
+    return Image.fromarray(new_image)
+
 def get_inpainting_input(
     rgb_filepath,
     segmentations_list_filtered,
