@@ -4,6 +4,7 @@ from PIL import Image
 import cv2
 from copy import deepcopy
 import re
+import yaml
 
 class Segmentation:
     """
@@ -14,6 +15,14 @@ class Segmentation:
         self.box = box
         self.mask = mask
         self.score = score
+
+def load_config(config_path):
+    """
+    Loads DINO/SAM-related config from a YAML file.
+    """
+    with open(config_path, 'r') as f:
+        config_data = yaml.safe_load(f)
+    return config_data
 
 def score_from_phrase(phrase):
     """

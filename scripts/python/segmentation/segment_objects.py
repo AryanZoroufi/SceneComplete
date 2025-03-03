@@ -3,7 +3,6 @@ import os
 import cv2
 import numpy as np
 from PIL import Image
-import yaml
 
 import sys
 sys.path.append('utils')
@@ -11,21 +10,10 @@ from utils.segmentation_processor import get_masks_and_boxes
 from utils.segmentation_utils import (
     Segmentation,
     score_from_phrase,
-    calculate_iou,
     non_maximum_suppression,
-    enlarge_coordinates,
-    resize_foreground,
-    resize_foreground_padded,
     get_inpainting_input,
+    load_config
 )
-
-def load_config(config_path):
-    """
-    Loads DINO/SAM-related config from a YAML file.
-    """
-    with open(config_path, 'r') as f:
-        config_data = yaml.safe_load(f)
-    return config_data
 
 def get_segmentations(
     filename,
