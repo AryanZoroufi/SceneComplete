@@ -168,4 +168,5 @@ Desktop.ini
 
 # Specific folders that need to be ignored
 data/*
-modules/weights
+scenecomplete/modules/weights/*
+scenecomplete/modules/BrushNet/data/*

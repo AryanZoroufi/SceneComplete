@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scenecomplete"
+version = "0.1.0"
+description = "An open-world 3D scene completion system that constructs a complete, segmented, 3D model of a scene from a single RGB-D image."
+authors = [
+  { name = "Aditya Agarwal", email = "adityaag@mit.edu" },
+  { name = "Gaurav Singh", email = "gaurav.si@research.iiit.ac.in" },
+  { name = "Bipasha Sen", email = "bise@mit.edu" },
+  { name = "Leslie Kaelbling", email = "lpk@mit.edu" },
+  { name = "Tomás Lozano-Pérez", email = "tlp@mit.edu" }
+]
+readme = "README.md"
+license = { text = "MIT" }
+keywords = ["completion", "robotics"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+]
+dependencies = [
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["scenecomplete*"]
