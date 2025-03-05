@@ -28,10 +28,10 @@ from torchvision.transforms import v2
 from pytorch_lightning import seed_everything
 from omegaconf import OmegaConf
 from einops import rearrange
-from tqdm import tqdm
 from huggingface_hub import hf_hub_download
 from diffusers import DiffusionPipeline, EulerAncestralDiscreteScheduler
 import json
+from importlib.resources import files
 
 # Project utils
 from scenecomplete.modules.InstantMesh.src.utils.train_util import instantiate_from_config
@@ -49,6 +49,8 @@ def initialize_configs(args):
     seed_everything(args.seed)
 
     # Load config
+    config_dir = files('scenecomplete.modules.InstantMesh.configs')
+    args.config = config_dir / args.config
     config = OmegaConf.load(args.config)
     config_name = os.path.basename(args.config).replace('.yaml', '')
     model_config = config.model_config
@@ -79,9 +81,9 @@ def create_output_directories(base_output_path, config_name):
 
 def main():
     parser = argparse.ArgumentParser(description="InstantMesh-based 3D reconstruction pipeline.")
-    parser.add_argument('config', type=str, help='Path to config file.')
     parser.add_argument('input_path', type=str, help='Path to thhe image directory.')
-    parser.add_argument('--output_path', type=str, default='outputs/', help='Output directory.')
+    parser.add_argument('--config', type=str, default='instant-mesh-base.yaml', help='Path to config file.')
+    parser.add_argument('--output_path', type=str, default='imesh_outputs/', help='Output directory.')
     parser.add_argument('--diffusion_steps', type=int, default=75, help='Denoising Sampling steps.')
     parser.add_argument('--seed', type=int, default=42, help='Random seed for sampling.')
     parser.add_argument('--scale', type=float, default=1.0, help='Scale of the generated object.')
@@ -103,7 +105,7 @@ def main():
     print('[INFO] Loading diffusion model ...')
     pipeline = DiffusionPipeline.from_pretrained(
         "sudo-ai/zero123plus-v1.2", 
-        custom_pipeline="zero123plus",
+        custom_pipeline=str(files('scenecomplete.modules.InstantMesh.zero123plus') / 'pipeline.py'),
         torch_dtype=torch.float16,
     )
     pipeline.scheduler = EulerAncestralDiscreteScheduler.from_config(
