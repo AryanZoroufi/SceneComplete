@@ -1,18 +1,20 @@
 """
-run_zero123plus.py
+generate_3d_mesh.py
 
-Main script to run a Zero123Plus-based 3D reconstruction pipeline.
-- Takes input images.
-- Optionally removes background.
-- Uses a diffusion model for multi-view generation.
-- Reconstructs a 3D mesh via a learned representation (e.g. triplanes).
-- (Optionally) exports texture map and/or saves a video of the circular render.
+Script runs InstantMesh-based image-to-3D reconstruction model. 
+- Takes in input images.
+- Optionally removes background (specified by `--no_rembg` flag).
+- Uses a diffusion model for multi-view generation. 
+- Reconstructs a 3D mesh using triplanes. 
+- Exports texture map and or/saves video of the renders. 
 
 Example usage:
-    python run_zero123plus.py config.yaml my_image.png \
-        --output_path outputs \
-        --diffusion_steps 75 \
+    python generate_3d_mesh.py configs/instant-mesh-base.yaml ../imesh_inputs \
+        --output_path ../outputs \
         --seed 42 \
+        -- no_rembg \
+        --export_texmap \
+        --save_video \
         ...
 """
 
@@ -78,7 +80,7 @@ def create_output_directories(base_output_path, config_name):
 def main():
     parser = argparse.ArgumentParser(description="InstantMesh-based 3D reconstruction pipeline.")
     parser.add_argument('config', type=str, help='Path to config file.')
-    parser.add_argument('input_path', type=str, help='Path to input image or directory.')
+    parser.add_argument('input_path', type=str, help='Path to thhe image directory.')
     parser.add_argument('--output_path', type=str, default='outputs/', help='Output directory.')
     parser.add_argument('--diffusion_steps', type=int, default=75, help='Denoising Sampling steps.')
     parser.add_argument('--seed', type=int, default=42, help='Random seed for sampling.')

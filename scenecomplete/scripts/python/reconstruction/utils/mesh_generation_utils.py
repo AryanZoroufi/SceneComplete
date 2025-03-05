@@ -1,8 +1,8 @@
 """
-zero123plus_utils.py
+mesh_generation_utils.py
 
-Utility functions for the Zero123Plus-based pipeline.
-Contains camera creation, and rendering for color (RGB) and depth frames.
+Utility functions for InstantMesh-based completion pipeline. 
+Contains rendering camera creation, and functions for rendering color (RGB) and depth frames.
 """
 
 import torch

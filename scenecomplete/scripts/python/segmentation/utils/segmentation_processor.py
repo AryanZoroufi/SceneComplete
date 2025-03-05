@@ -7,11 +7,6 @@ import cv2
 from PIL import Image
 
 # GroundingDINO imports
-# sys.path.append(os.path.join(os.getcwd(), "GroundingDINO"))  # if needed to import from GroundingDINO
-# sys.path.append("/home/aditya/Research/phd/code/UncertainShapeReconstruction/scene_reconstruction/GroundingDINO")
-# dirpath = '/home/aditya/Research/phd/code/SceneComplete/modules/Grounded-Segment-Anything'
-# sys.path.append(dirpath)
-
 import scenecomplete.modules.GroundedSegmentAnything.GroundingDINO.groundingdino.datasets.transforms as T
 from scenecomplete.modules.GroundedSegmentAnything.GroundingDINO.groundingdino.models import build_model
 from scenecomplete.modules.GroundedSegmentAnything.GroundingDINO.groundingdino.util.slconfig import SLConfig
@@ -19,14 +14,6 @@ from scenecomplete.modules.GroundedSegmentAnything.GroundingDINO.groundingdino.u
     clean_state_dict,
     get_phrases_from_posmap,
 )
-
-# import GroundingDINO.groundingdino.datasets.transforms as T
-# from GroundingDINO.groundingdino.models import build_model
-# from GroundingDINO.groundingdino.util.slconfig import SLConfig
-# from GroundingDINO.groundingdino.util.utils import (
-#     clean_state_dict,
-#     get_phrases_from_posmap,
-# )
 
 # Segment Anything imports
 from segment_anything import sam_model_registry, SamPredictor
