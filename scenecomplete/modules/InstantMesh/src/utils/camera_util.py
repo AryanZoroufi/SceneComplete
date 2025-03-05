@@ -59,7 +59,7 @@ def spherical_camera_pose(azimuths: np.ndarray, elevations: np.ndarray, radius=2
     return c2ws
 
 
-def get_circular_camera_poses(M=120, radius=2.5, elevation=30.0):
+def get_circular_camera_poses(M=120, radius=2.5, elevation=30.0, azi=True):
     # M: number of circular views
     # radius: camera dist to center
     # elevation: elevation degrees of the camera
@@ -70,7 +70,10 @@ def get_circular_camera_poses(M=120, radius=2.5, elevation=30.0):
 
     camera_positions = []
     for i in range(M):
-        azimuth = 2 * np.pi * i / M
+        if azi:
+            azimuth = 0
+        else:
+            azimuth = 2 * np.pi * i / M
         x = radius * np.cos(elevation) * np.cos(azimuth)
         y = radius * np.cos(elevation) * np.sin(azimuth)
         z = radius * np.sin(elevation)
