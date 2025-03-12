@@ -13,3 +13,6 @@
 [submodule "scenecomplete/modules/dino-vit-features"]
 	path = scenecomplete/modules/dino-vit-features
 	url = https://github.com/ShirAmir/dino-vit-features
+[submodule "scenecomplete/modules/dino_vit_features"]
+	path = scenecomplete/modules/dino_vit_features
+	url = https://github.com/skymanaditya1/dino-vit-features
