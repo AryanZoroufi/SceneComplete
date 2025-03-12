@@ -1,0 +1,220 @@
+"""
+compute_mesh_scaling.py
+
+Main script to compute a scaling factor (and transformations) between
+a reconstructed mesh and a partial pointcloud of the same object.
+"""
+
+import os
+import os.path as osp
+import numpy as np
+import matplotlib.image as mpimg
+import open3d as o3d
+from copy import deepcopy
+from argparse import ArgumentParser
+
+# Scaling utilities
+from scenecomplete.scripts.python.scaling.scaling_utils import (
+    get_dino_correspondences,
+    get_pointcloud,
+    get_pixel_indices,
+    highlight_image,
+    highlight_points,
+    is_origin,
+    estimate_affine_transformation,
+    estimate_similarity_transform,
+)
+
+DEBUG = False
+SIM_FLAG = False  # whether to use a similarity transform
+
+def compute_scaling_for_object(
+    instant_mesh_dirpath: str,
+    grasp_data_dirpath: str,
+    output_dirpath: str,
+    obj_id: int,
+    use_similarity: bool=False,
+    debug: bool=False
+):
+    """
+    Compute the scaling factor for a single object based on DINO correspondences
+    and partial pointcloud matching.
+
+    Args:
+        instant_mesh_dirpath (str): Path to the folder with inpainted images/videos, meshes, etc.
+        grasp_data_dirpath (str): Path to 'grasp_data' containing the depth, RGB, etc.
+        output_dirpath (str): Where to save final result(s).
+        obj_id (int): The object ID to process (example: 0, 1, 2, etc.).
+        use_similarity (bool): If True, estimate a uniform-scale + rotation transform.
+        debug (bool): If True, enable debug prints and visualizations.
+
+    Returns:
+        scale (float or None): The scale factor. If no correspondences found, returns None.
+    """
+    # Build paths
+    image_path1 = f'{instant_mesh_dirpath}/videos/{obj_id}_rgba.png'
+    image_path2 = f'{grasp_data_dirpath}/{obj_id}_masked.png'
+
+    depth_path1 = f'{instant_mesh_dirpath}/videos/{obj_id}_rgba_depth.png'
+    depth_path2 = f'{grasp_data_dirpath}/{obj_id}_depth.png'
+
+    intrinsics_file1 = f'{instant_mesh_dirpath}/videos/{obj_id}_rgba.json'
+    intrinsics_file2 = f'{grasp_data_dirpath}/cam_K.json'
+
+    mesh_path = f'{instant_mesh_dirpath}/meshes/{obj_id}_rgba.obj'
+
+    # 1. Get correspondences via DINO
+    try:
+        px1, px2, im1_pil, im2_pil = get_dino_correspondences(image_path1, image_path2, debug=debug)
+    except Exception as e:
+        if debug:
+            print(f"[DEBUG] No correspondences found or error: {e}")
+        return None
+
+    # 2. Scale the DINO pixel coords to the original image resolution
+    color_image1 = (mpimg.imread(image_path1) * 255).astype(np.uint8)
+    color_image2 = (mpimg.imread(image_path2) * 255).astype(np.uint8)
+    
+    height1, width1, _ = color_image1.shape
+    resized_w1, resized_h1 = im1_pil.size  # PIL => (width, height)
+    
+    height2, width2, _ = color_image2.shape
+    resized_w2, resized_h2 = im2_pil.size
+
+    # Take the first 10 correspondences for demonstration; you can vary
+    pixel_indices = np.arange(10)
+    px1_scaled = [
+        (int(pt[0]*height1/resized_h1), int(pt[1]*width1/resized_w1))
+        for i, pt in enumerate(px1) if i in pixel_indices
+    ]
+    px2_scaled = [
+        (int(pt[0]*height2/resized_h2), int(pt[1]*width2/resized_w2))
+        for i, pt in enumerate(px2) if i in pixel_indices
+    ]
+
+    if debug:
+        highlight_image(image_path1, px1_scaled)
+        highlight_image(image_path2, px2_scaled)
+
+    # 3. Build pointclouds
+    pcd1 = get_pointcloud(depth_path1, image_path1, intrinsics_file1)
+    pcd2 = get_pointcloud(depth_path2, image_path2, intrinsics_file2)
+
+    # 4. Retrieve the 3D points that correspond to the scaled pixel coords
+    pcd_indices1, pcd_values1 = get_pixel_indices(color_image1, pcd1, px1_scaled)
+    pcd_indices2, pcd_values2 = get_pixel_indices(color_image2, pcd2, px2_scaled)
+
+    # Filter out origin points
+    keep_pcd1 = []
+    keep_pcd2 = []
+    keep_idx1 = []
+    keep_idx2 = []
+    for i, (v1, v2) in enumerate(zip(pcd_values1, pcd_values2)):
+        if is_origin(v1) or is_origin(v2):
+            continue
+        keep_pcd1.append(v1)
+        keep_pcd2.append(v2)
+        keep_idx1.append(pcd_indices1[i])
+        keep_idx2.append(pcd_indices2[i])
+
+    if debug:
+        highlight_points(pcd1, keep_idx1, visualize=False)
+        highlight_points(pcd2, keep_idx2, visualize=False)
+
+    if len(keep_pcd1) == 0:
+        if debug:
+            print("[DEBUG] No valid 3D correspondences after filtering origin points.")
+        return None
+
+    keep_pcd1 = np.asarray(keep_pcd1)
+    keep_pcd2 = np.asarray(keep_pcd2)
+
+    # 5. Estimate transform
+    try:
+        if use_similarity:
+            transform, scale_factor = estimate_similarity_transform(keep_pcd1, keep_pcd2)
+        else:
+            transform = estimate_affine_transformation(keep_pcd1, keep_pcd2)
+            # Attempt to approximate scale from the 3x3 upper left block
+            scale_factor = np.cbrt(np.abs(np.linalg.det(transform[:3, :3])))
+    except Exception as e:
+        if debug:
+            print(f"[DEBUG] Could not estimate transform. Error: {e}")
+        return None
+
+    return scale_factor
+
+
+def main():
+    parser = ArgumentParser(description="Compute scaling factor between reconstructed mesh and partial pointcloud.")
+    parser.add_argument("--input_dirpath", type=str, required=True,
+                        help="Root input directory containing 'imesh_outputs' and 'grasp_data'.")
+    parser.add_argument("--output_dirpath", type=str, required=True,
+                        help="Directory to store scaled meshes or logs.")
+    parser.add_argument("--camera_name", type=str, default="realsense",
+                        help="Name of the camera (unused for now, but may be used for logging).")
+    parser.add_argument("--similarity", action="store_true",
+                        help="If set, estimate a uniform scale + rotation + translation transform.")
+    parser.add_argument("--debug", action="store_true",
+                        help="If set, enables debug logs and extra visualizations.")
+    parser.add_argument("--debug_index", type=int, default=0,
+                        help="If set, skip the first debug_index objects when iterating (for dev usage).")
+
+    args = parser.parse_args()
+    global DEBUG, SIM_FLAG
+    DEBUG = args.debug
+    SIM_FLAG = args.similarity
+
+    os.makedirs(args.output_dirpath, exist_ok=True)
+
+    # Build directories
+    instant_mesh_model = 'instant-mesh-base'  # Hardcoded or pass as param
+    instant_mesh_dirpath = osp.join(args.input_dirpath, f'imesh_outputs/{instant_mesh_model}')
+    grasp_data_dirpath = osp.join(args.input_dirpath, 'grasp_data')
+
+    # Sort objects by numeric ID
+    images_dir = osp.join(instant_mesh_dirpath, 'images')
+    if not osp.isdir(images_dir):
+        print(f"[ERROR] Missing directory: {images_dir}")
+        return
+
+    objects = os.listdir(images_dir)
+    obj_ids = sorted(int(obj.split('_')[0]) for obj in objects)
+    
+    if DEBUG:
+        obj_ids = obj_ids[args.debug_index:]
+
+    obj_scale_mapping = {}
+    avg_scale = 0.0
+    count = 0
+
+    for obj_id in obj_ids:
+        scale = compute_scaling_for_object(
+            instant_mesh_dirpath=instant_mesh_dirpath,
+            grasp_data_dirpath=grasp_data_dirpath,
+            output_dirpath=args.output_dirpath,
+            obj_id=obj_id,
+            use_similarity=SIM_FLAG,
+            debug=DEBUG
+        )
+        obj_scale_mapping[obj_id] = scale
+        if scale is not None:
+            avg_scale = (avg_scale * count + scale) / (count + 1)
+            count += 1
+
+    # Fill in None values with average scale
+    for k, v in obj_scale_mapping.items():
+        if v is None:
+            obj_scale_mapping[k] = avg_scale
+
+    # Write results
+    scale_txt_path = osp.join(args.output_dirpath, "obj_scale_mapping.txt")
+    with open(scale_txt_path, "w") as f:
+        for key, val in obj_scale_mapping.items():
+            f.write(f"{key}:{val}\n")
+
+    print(f"[INFO] Scale mapping saved to {scale_txt_path}")
+
+
+if __name__ == "__main__":
+    main()

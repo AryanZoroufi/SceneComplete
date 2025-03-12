@@ -13,3 +13,6 @@
 [submodule "modules/Grounded-Segment-Anything"]
 	path = modules/Grounded-Segment-Anything
 	url = https://github.com/IDEA-Research/Grounded-Segment-Anything
+[submodule "scenecomplete/modules/dino-vit-features"]
+	path = scenecomplete/modules/dino-vit-features
+	url = https://github.com/ShirAmir/dino-vit-features
