@@ -21,7 +21,6 @@ from scenecomplete.scripts.python.scaling.scaling_utils import (
     highlight_image,
     highlight_points,
     is_origin,
-    estimate_affine_transformation,
     estimate_similarity_transform,
 )
 
@@ -144,8 +143,6 @@ def main():
                         help="Name of the Instant Mesh model.")
     parser.add_argument("--camera_name", type=str, default="realsense",
                         help="Name of the camera.")
-    parser.add_argument("--similarity", action="store_true",
-                        help="If set, estimate a similarity transformation.")
     parser.add_argument("--debug", action="store_true",
                         help="If set, enables debug logs and extra visualizations.")
 
