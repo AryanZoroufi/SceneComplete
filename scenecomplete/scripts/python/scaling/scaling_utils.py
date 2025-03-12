@@ -16,9 +16,9 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from copy import deepcopy
 import torch
-
-from correspondences import find_correspondences, draw_correspondences
 from scipy.spatial.transform import Rotation
+
+from scenecomplete.modules.dino_vit_features.correspondences import find_correspondences, draw_correspondences
 
 def read_camera_intrinsics(intrinsic_json: str) -> dict:
     """

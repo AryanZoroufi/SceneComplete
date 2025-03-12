@@ -1,8 +1,8 @@
 """
 compute_mesh_scaling.py
 
-Main script to compute a scaling factor (and transformations) between
-a reconstructed mesh and a partial pointcloud of the same object.
+Script to compute a scaling factor between the reconstructed meshes and input partial pointclouds.
+Computes the pixel-wise correspondences and project to point-correspondences to estimate scale factor.
 """
 
 import os
@@ -26,26 +26,22 @@ from scenecomplete.scripts.python.scaling.scaling_utils import (
 )
 
 DEBUG = False
-SIM_FLAG = False  # whether to use a similarity transform
 
 def compute_scaling_for_object(
     instant_mesh_dirpath: str,
     grasp_data_dirpath: str,
-    output_dirpath: str,
     obj_id: int,
-    use_similarity: bool=False,
-    debug: bool=False
+    debug: bool=False,
+    num_correspondences: int=10,
 ):
     """
-    Compute the scaling factor for a single object based on DINO correspondences
-    and partial pointcloud matching.
+    Compute the scaling factor for a single object based on DINO-ViT correspondences
+    between the reconstructed mesh's rendered image and the segmented image of the object.
 
     Args:
         instant_mesh_dirpath (str): Path to the folder with inpainted images/videos, meshes, etc.
         grasp_data_dirpath (str): Path to 'grasp_data' containing the depth, RGB, etc.
-        output_dirpath (str): Where to save final result(s).
         obj_id (int): The object ID to process (example: 0, 1, 2, etc.).
-        use_similarity (bool): If True, estimate a uniform-scale + rotation transform.
         debug (bool): If True, enable debug prints and visualizations.
 
     Returns:
@@ -60,8 +56,6 @@ def compute_scaling_for_object(
 
     intrinsics_file1 = f'{instant_mesh_dirpath}/videos/{obj_id}_rgba.json'
     intrinsics_file2 = f'{grasp_data_dirpath}/cam_K.json'
-
-    mesh_path = f'{instant_mesh_dirpath}/meshes/{obj_id}_rgba.obj'
 
     # 1. Get correspondences via DINO
     try:
@@ -81,8 +75,8 @@ def compute_scaling_for_object(
     height2, width2, _ = color_image2.shape
     resized_w2, resized_h2 = im2_pil.size
 
-    # Take the first 10 correspondences for demonstration; you can vary
-    pixel_indices = np.arange(10)
+    # Take the first {num_correspondences} correspondences for demonstration; you can vary
+    pixel_indices = np.arange(num_correspondences)
     px1_scaled = [
         (int(pt[0]*height1/resized_h1), int(pt[1]*width1/resized_w1))
         for i, pt in enumerate(px1) if i in pixel_indices
@@ -131,12 +125,7 @@ def compute_scaling_for_object(
 
     # 5. Estimate transform
     try:
-        if use_similarity:
-            transform, scale_factor = estimate_similarity_transform(keep_pcd1, keep_pcd2)
-        else:
-            transform = estimate_affine_transformation(keep_pcd1, keep_pcd2)
-            # Attempt to approximate scale from the 3x3 upper left block
-            scale_factor = np.cbrt(np.abs(np.linalg.det(transform[:3, :3])))
+        _, scale_factor = estimate_similarity_transform(keep_pcd1, keep_pcd2)
     except Exception as e:
         if debug:
             print(f"[DEBUG] Could not estimate transform. Error: {e}")
@@ -150,25 +139,23 @@ def main():
     parser.add_argument("--input_dirpath", type=str, required=True,
                         help="Root input directory containing 'imesh_outputs' and 'grasp_data'.")
     parser.add_argument("--output_dirpath", type=str, required=True,
-                        help="Directory to store scaled meshes or logs.")
+                        help="Directory to store scaled meshes.")
+    parser.add_argument("--instant_mesh_model", type=str, default="instant-mesh-base",
+                        help="Name of the Instant Mesh model.")
     parser.add_argument("--camera_name", type=str, default="realsense",
-                        help="Name of the camera (unused for now, but may be used for logging).")
+                        help="Name of the camera.")
     parser.add_argument("--similarity", action="store_true",
-                        help="If set, estimate a uniform scale + rotation + translation transform.")
+                        help="If set, estimate a similarity transformation.")
     parser.add_argument("--debug", action="store_true",
                         help="If set, enables debug logs and extra visualizations.")
-    parser.add_argument("--debug_index", type=int, default=0,
-                        help="If set, skip the first debug_index objects when iterating (for dev usage).")
 
     args = parser.parse_args()
-    global DEBUG, SIM_FLAG
     DEBUG = args.debug
-    SIM_FLAG = args.similarity
 
     os.makedirs(args.output_dirpath, exist_ok=True)
 
     # Build directories
-    instant_mesh_model = 'instant-mesh-base'  # Hardcoded or pass as param
+    instant_mesh_model = args.instant_mesh_model
     instant_mesh_dirpath = osp.join(args.input_dirpath, f'imesh_outputs/{instant_mesh_model}')
     grasp_data_dirpath = osp.join(args.input_dirpath, 'grasp_data')
 
@@ -184,7 +171,7 @@ def main():
     if DEBUG:
         obj_ids = obj_ids[args.debug_index:]
 
-    obj_scale_mapping = {}
+    obj_scale_mapping = {} # obj_id -> scale factor
     avg_scale = 0.0
     count = 0
 
@@ -194,7 +181,6 @@ def main():
             grasp_data_dirpath=grasp_data_dirpath,
             output_dirpath=args.output_dirpath,
             obj_id=obj_id,
-            use_similarity=SIM_FLAG,
             debug=DEBUG
         )
         obj_scale_mapping[obj_id] = scale
