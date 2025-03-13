@@ -176,7 +176,6 @@ def main():
         scale = compute_scaling_for_object(
             instant_mesh_dirpath=instant_mesh_dirpath,
             grasp_data_dirpath=grasp_data_dirpath,
-            output_dirpath=args.output_dirpath,
             obj_id=obj_id,
             debug=DEBUG
         )

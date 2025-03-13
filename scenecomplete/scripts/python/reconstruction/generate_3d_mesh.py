@@ -14,30 +14,30 @@ Example usage:
         --seed 42 \
         -- no_rembg \
         --export_texmap \
-        --save_video \
         ...
 """
 
 import os
 import argparse
 import numpy as np
-import torch
-import rembg
 from PIL import Image
-from torchvision.transforms import v2
-from pytorch_lightning import seed_everything
+import matplotlib.pyplot as plt
+import json
 from omegaconf import OmegaConf
 from einops import rearrange
-from huggingface_hub import hf_hub_download
-from diffusers import DiffusionPipeline, EulerAncestralDiscreteScheduler
-import json
 from importlib.resources import files
+from diffusers import DiffusionPipeline, EulerAncestralDiscreteScheduler
+from huggingface_hub import hf_hub_download
+import rembg
+import torch
+from torchvision.transforms import v2
+from pytorch_lightning import seed_everything
 
 # Project utils
 from scenecomplete.modules.InstantMesh.src.utils.train_util import instantiate_from_config
 from scenecomplete.modules.InstantMesh.src.utils.camera_util import get_zero123plus_input_cameras
 from scenecomplete.modules.InstantMesh.src.utils.mesh_util import save_obj, save_obj_with_mtl
-from scenecomplete.modules.InstantMesh.src.utils.infer_util import remove_background, resize_foreground, save_video
+from scenecomplete.modules.InstantMesh.src.utils.infer_util import remove_background, resize_foreground
 from scenecomplete.scripts.python.reconstruction.utils.mesh_generation_utils import (
     get_render_cameras,
     render_rgb_frames,
@@ -91,8 +91,8 @@ def main():
     parser.add_argument('--view', type=int, default=6, choices=[4, 6], help='Number of input views to consider.')
     parser.add_argument('--no_rembg', action='store_true', help='Skip background removal.')
     parser.add_argument('--export_texmap', action='store_true', help='Export a mesh with texture map.')
-    parser.add_argument('--save_video', action='store_true', help='Whether to generate a circular-view video.')
     parser.add_argument('--vis_mesh', action='store_true', help='Visualize the final mesh (requires Open3D).')
+    parser.add_argument('--save_triplanes', action='store_true', help='Save triplanes as numpy files.')
     args = parser.parse_args()
 
     # Set random seed
@@ -224,13 +224,14 @@ def main():
 
         print(f'[{idx+1}/{len(outputs)}] Creating {name} ...')
         with torch.no_grad():
-            # get triplane
-            planes = model.forward_planes(images, sub_cameras)
+            # generate triplanes if required
+            if args.save_triplanes:
+                planes = model.forward_planes(images, sub_cameras)
 
-            # save triplane
-            npy_path = os.path.join(triplane_path, f'{name}.npy')
-            np.save(npy_path, planes.cpu().numpy())
-            print(f"[INFO] Triplane saved to {npy_path}")
+                # save triplane
+                npy_path = os.path.join(triplane_path, f'{name}.npy')
+                np.save(npy_path, planes.cpu().numpy())
+                print(f"[INFO] Triplane saved to {npy_path}")
 
             # extract mesh
             mesh_obj_path = os.path.join(mesh_path, f'{name}.obj')
@@ -261,56 +262,74 @@ def main():
                 axis = o3d.geometry.TriangleMesh.create_coordinate_frame(size=0.5)
                 o3d.visualization.draw_geometries([mesh, axis])
 
-            # 8) Generate video if required
-            if args.save_video:
-                video_out_path = os.path.join(video_path, f'{name}.mp4')
-                render_cameras, intrinsics = get_render_cameras(
-                    batch_size=1,
-                    num_views=1,  # or however many frames you want
-                    radius=args.distance,
-                    elevation=20.0,
-                    use_flexicubes=IS_FLEXICUBES,
-                    return_intrinsics=True,
-                    fov_degrees=30.0
-                )
-                render_cameras = render_cameras.to(device)
-                render_res = 256
-                intrinsics *= render_res
-                intrinsics = intrinsics.reshape(3, 3).T.reshape(-1)
-                intrinsics[-1] = 1.0
+            # 8) Save rendered rgb and depth frames
+            video_out_path = os.path.join(video_path, f'{name}.mp4')
+            render_cameras, intrinsics = get_render_cameras(
+                batch_size=1,
+                num_views=1,  # or however many frames you want
+                radius=args.distance,
+                elevation=20.0,
+                use_flexicubes=IS_FLEXICUBES,
+                return_intrinsics=True,
+                fov_degrees=30.0
+            )
+            render_cameras = render_cameras.to(device)
+            render_res = 256
+            intrinsics *= render_res
+            intrinsics = intrinsics.reshape(3, 3).T.reshape(-1)
+            intrinsics[-1] = 1.0
 
-                # Save intrinsics JSON
-                camK_json = {
-                    'width': render_res,
-                    'height': render_res,
-                    'intrinsic_matrix': intrinsics.cpu().numpy().tolist(),
-                }
-                json_path = video_out_path.replace('.mp4', '.json')
-                with open(json_path, 'w') as f:
-                    json.dump(camK_json, f, indent=4)
+            # Save intrinsics JSON
+            camK_json = {
+                'width': render_res,
+                'height': render_res,
+                'intrinsic_matrix': intrinsics.cpu().numpy().tolist(),
+            }
+            json_path = video_out_path.replace('.mp4', '.json')
+            with open(json_path, 'w') as f:
+                json.dump(camK_json, f, indent=4)
 
-                # Render frames
-                frames = render_rgb_frames(
-                    model, planes,
-                    cameras=render_cameras,
-                    render_size=render_res,
-                    chunk_size=chunk_size,
-                    use_flexicubes=IS_FLEXICUBES
-                )
-                depths = render_depth_frames(
-                    model, planes,
-                    cameras=render_cameras,
-                    render_size=render_res,
-                    chunk_size=chunk_size,
-                    use_flexicubes=IS_FLEXICUBES
-                )
+            # Render frames
+            frames = render_rgb_frames(
+                model, planes,
+                cameras=render_cameras,
+                render_size=render_res,
+                chunk_size=chunk_size,
+                use_flexicubes=IS_FLEXICUBES
+            )
+            depths = render_depth_frames(
+                model, planes,
+                cameras=render_cameras,
+                render_size=render_res,
+                chunk_size=chunk_size,
+                use_flexicubes=IS_FLEXICUBES
+            )
 
-                # Save video
-                save_video(
-                    frames,
-                    video_out_path,
-                    fps=30,
-                )
+            print(f"[DEBUG] frames shape: {frames.shape}, depths shape: {depths.shape}")
+
+            # Save first frame as PNG
+            first_frame = frames[0].cpu().numpy().transpose(1, 2, 0)
+            first_frame_uint8 = (first_frame * 255).astype(np.uint8)
+            Image.fromarray(first_frame_uint8).save(video_out_path.replace('.mp4', '.png'))
+
+            plt.clf()
+            first_depth = depths[0].cpu().numpy().transpose(1, 2, 0)[..., 0]
+            first_depth_grad = np.gradient(first_depth)
+            first_depth_grad = np.sqrt(first_depth_grad[0]**2 + first_depth_grad[1]**2)
+            first_depth_grad = (first_depth_grad * 255 / first_depth_grad.max()).astype(np.uint8)
+            mask1 = first_depth_grad > 128
+            first_depth_grad[mask1] = 255
+
+            Image.fromarray(first_depth_grad).save(video_out_path.replace('.mp4', '_depth_grad.png'))
+
+            first_depth = (first_depth * 1000).astype(np.uint16)
+            bg_val = first_depth[0, 0]
+            first_depth[first_depth == bg_val] = 0
+            first_depth[mask1] = 0
+            plt.imshow(first_depth)
+            plt.colorbar()
+            plt.savefig(video_out_path.replace('.mp4', '_depth_plt.png'))
+            Image.fromarray(first_depth).save(video_out_path.replace('.mp4', '_depth.png'))
 
     print("[INFO] Done!")
 
