@@ -28,7 +28,7 @@ DEBUG = False
 
 def compute_scaling_for_object(
     instant_mesh_dirpath: str,
-    grasp_data_dirpath: str,
+    segmentation_data_dirpath: str,
     obj_id: int,
     debug: bool=False,
     num_correspondences: int=10,
@@ -39,7 +39,7 @@ def compute_scaling_for_object(
 
     Args:
         instant_mesh_dirpath (str): Path to the folder with inpainted images/videos, meshes, etc.
-        grasp_data_dirpath (str): Path to 'grasp_data' containing the depth, RGB, etc.
+        segmentation_data_dirpath (str): Path to segmentation_data containing the segmented depth, RGB, etc.
         obj_id (int): The object ID to process (example: 0, 1, 2, etc.).
         debug (bool): If True, enable debug prints and visualizations.
 
@@ -48,13 +48,13 @@ def compute_scaling_for_object(
     """
     # Build paths
     image_path1 = f'{instant_mesh_dirpath}/videos/{obj_id}_rgba.png'
-    image_path2 = f'{grasp_data_dirpath}/{obj_id}_masked.png'
+    image_path2 = f'{segmentation_data_dirpath}/{obj_id}_masked.png'
 
     depth_path1 = f'{instant_mesh_dirpath}/videos/{obj_id}_rgba_depth.png'
-    depth_path2 = f'{grasp_data_dirpath}/{obj_id}_depth.png'
+    depth_path2 = f'{segmentation_data_dirpath}/{obj_id}_depth.png'
 
     intrinsics_file1 = f'{instant_mesh_dirpath}/videos/{obj_id}_rgba.json'
-    intrinsics_file2 = f'{grasp_data_dirpath}/cam_K.json'
+    intrinsics_file2 = f'{segmentation_data_dirpath}/cam_K.json'
 
     # 1. Get correspondences via DINO
     try:
@@ -135,8 +135,10 @@ def compute_scaling_for_object(
 
 def main():
     parser = ArgumentParser(description="Compute scaling factor between reconstructed mesh and partial pointcloud.")
-    parser.add_argument("--input_dirpath", type=str, required=True,
-                        help="Root input directory containing 'imesh_outputs' and 'grasp_data'.")
+    parser.add_argument("--segmentation_dirpath", type=str, required=True,
+                        help="Directory containing segmentation masks.")
+    parser.add_argument("--imesh_outputs", type=str, default="imesh_outputs",
+                        help="Directory containing reconstruction outputs.")
     parser.add_argument("--output_dirpath", type=str, required=True,
                         help="Directory to store scaled meshes.")
     parser.add_argument("--instant_mesh_model", type=str, default="instant-mesh-base",
@@ -153,8 +155,8 @@ def main():
 
     # Build directories
     instant_mesh_model = args.instant_mesh_model
-    instant_mesh_dirpath = osp.join(args.input_dirpath, f'imesh_outputs/{instant_mesh_model}')
-    grasp_data_dirpath = osp.join(args.input_dirpath, 'grasp_data')
+    instant_mesh_dirpath = osp.join(args.imesh_outputs, instant_mesh_model)
+    segmentation_data_dirpath = args.segmentation_dirpath
 
     # Sort objects by numeric ID
     images_dir = osp.join(instant_mesh_dirpath, 'images')
@@ -175,7 +177,7 @@ def main():
     for obj_id in obj_ids:
         scale = compute_scaling_for_object(
             instant_mesh_dirpath=instant_mesh_dirpath,
-            grasp_data_dirpath=grasp_data_dirpath,
+            segmentation_data_dirpath=segmentation_data_dirpath,
             obj_id=obj_id,
             debug=DEBUG
         )
@@ -187,6 +189,7 @@ def main():
     # Fill in None values with average scale
     for k, v in obj_scale_mapping.items():
         if v is None:
+            print(f"[WARNING] Filling None value for object {k} with average scale {avg_scale}")
             obj_scale_mapping[k] = avg_scale
 
     # Write results
