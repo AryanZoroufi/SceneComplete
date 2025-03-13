@@ -6,8 +6,7 @@
 # distribution of this software and related documentation without an express
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
-
-from Utils import *
+from scenecomplete.modules.FoundationPose.Utils import *
 from datareader import *
 import itertools
 from learning.training.predict_score import *
