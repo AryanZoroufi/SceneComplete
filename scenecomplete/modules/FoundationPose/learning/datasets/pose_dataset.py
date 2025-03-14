@@ -12,10 +12,7 @@ from dataclasses import dataclass
 from typing import Iterator, List, Optional, Set, Union
 import numpy as np
 import torch
-code_dir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(f'{code_dir}/../../../../')
-from Utils import *
-
+from scenecomplete.modules.FoundationPose.Utils import *
 
 @dataclass
 class PoseData:

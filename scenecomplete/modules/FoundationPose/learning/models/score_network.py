@@ -8,20 +8,15 @@
 
 
 import os,sys
-import numpy as np
-code_dir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(code_dir)
-sys.path.append(f'{code_dir}/../../../../')
-from Utils import *
 from functools import partial
+import numpy as np
+import cv2
 import torch.nn.functional as F
 import torch
 import torch.nn as nn
-import cv2
-from network_modules import *
-from Utils import *
 
-
+from scenecomplete.modules.FoundationPose.learning.models.network_modules import *
+from scenecomplete.modules.FoundationPose.Utils import *
 
 
 class ScoreNetMultiPair(nn.Module):

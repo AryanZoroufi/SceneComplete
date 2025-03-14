@@ -58,7 +58,8 @@ def main():
     set_seed(0)
 
     debug = (args.debug == 1)
-    os.system(f'rm -rf {args.debug_dir}/* && mkdir -p {args.debug_dir}/track_vis {args.debug_dir}/ob_in_cam')
+    if debug:
+        os.system(f'rm -rf {args.debug_dir}/* && mkdir -p {args.debug_dir}/track_vis {args.debug_dir}/ob_in_cam')
 
     # Initialize estimators
     scorer = ScorePredictor()
