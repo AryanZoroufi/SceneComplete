@@ -35,9 +35,8 @@ from scipy.spatial import cKDTree
 from collections import OrderedDict
 import ruamel.yaml
 yaml = ruamel.yaml.YAML()
-code_dir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(code_dir)
-# sys.path.append(f"{code_dir}/mycpp/build")
+import scenecomplete.modules.FoundationPose.mycpp as mycpp
+
 try:
   import kornia
 except:

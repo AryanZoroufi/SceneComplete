@@ -7,12 +7,11 @@
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
 from scenecomplete.modules.FoundationPose.Utils import *
-from datareader import *
+from scenecomplete.modules.FoundationPose.datareader import *
 import itertools
-from learning.training.predict_score import *
-from learning.training.predict_pose_refine import *
+from scenecomplete.modules.FoundationPose.learning.training.predict_score import *
+from scenecomplete.modules.FoundationPose.learning.training.predict_pose_refine import *
 import yaml
-
 
 class FoundationPose:
   def __init__(self, model_pts, model_normals, symmetry_tfs=None, mesh=None, scorer:ScorePredictor=None, refiner:PoseRefinePredictor=None, glctx=None, debug=0, debug_dir='/home/bowen/debug/novel_pose_debug/'):

@@ -10,16 +10,16 @@
 import functools
 import os,sys,kornia
 import time
-code_dir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(f'{code_dir}/../../')
 import numpy as np
 import torch
 from omegaconf import OmegaConf
-from learning.models.refine_network import RefineNet
-from learning.datasets.h5_dataset import *
-from Utils import *
-from datareader import *
 
+import importlib.resources as pkg_resources
+import scenecomplete.modules.weights.fpose_weights as weights
+from scenecomplete.modules.FoundationPose.learning.models.refine_network import RefineNet
+from scenecomplete.modules.FoundationPose.learning.datasets.h5_dataset import *
+from scenecomplete.modules.FoundationPose.Utils import *
+from scenecomplete.modules.FoundationPose.datareader import *
 
 
 @torch.inference_mode()
@@ -96,10 +96,8 @@ class PoseRefinePredictor:
     self.amp = True
     self.run_name = "2023-10-28-18-33-37"
     model_name = 'model_best.pth'
-    code_dir = os.path.dirname(os.path.realpath(__file__))
-    ckpt_dir = f'{code_dir}/../../weights/{self.run_name}/{model_name}'
-
-    self.cfg = OmegaConf.load(f'{code_dir}/../../weights/{self.run_name}/config.yml')
+    ckpt_dir = pkg_resources.files(weights) / self.run_name / model_name
+    self.cfg = OmegaConf.load(pkg_resources.files(weights) / self.run_name / 'config.yml')
 
     self.cfg['ckpt_dir'] = ckpt_dir
     self.cfg['enable_amp'] = True

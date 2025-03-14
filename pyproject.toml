@@ -25,6 +25,3 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["scenecomplete*"]
-
-[tool.setuptools.package-data]
-"scenecomplete.modules.InstantMesh.configs" = ["*.yaml"]

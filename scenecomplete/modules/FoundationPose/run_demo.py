@@ -6,21 +6,24 @@
 # distribution of this software and related documentation without an express
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
-
-from estimater import *
-from datareader import *
+import scenecomplete.modules.FoundationPose.demo_data as demo_data
+from scenecomplete.modules.FoundationPose.estimater import *
+from scenecomplete.modules.FoundationPose.datareader import *
 import argparse
-
+import importlib.resources as pkg_resources
 
 if __name__=='__main__':
   parser = argparse.ArgumentParser()
-  code_dir = os.path.dirname(os.path.realpath(__file__))
-  parser.add_argument('--mesh_file', type=str, default=f'{code_dir}/demo_data/mustard0/mesh/textured_simple.obj')
-  parser.add_argument('--test_scene_dir', type=str, default=f'{code_dir}/demo_data/mustard0')
+  mesh_file = pkg_resources.files(demo_data) / 'mustard0/mesh/textured_simple.obj'
+  test_scene_dir = pkg_resources.files(demo_data) / 'mustard0'
+  debug_dir = pkg_resources.files(demo_data) / 'debug'
+
+  parser.add_argument('--mesh_file', type=str, default=mesh_file)
+  parser.add_argument('--test_scene_dir', type=str, default=test_scene_dir)
   parser.add_argument('--est_refine_iter', type=int, default=5)
   parser.add_argument('--track_refine_iter', type=int, default=2)
   parser.add_argument('--debug', type=int, default=1)
-  parser.add_argument('--debug_dir', type=str, default=f'{code_dir}/debug')
+  parser.add_argument('--debug_dir', type=str, default=debug_dir)
   args = parser.parse_args()
 
   set_logging_format()
