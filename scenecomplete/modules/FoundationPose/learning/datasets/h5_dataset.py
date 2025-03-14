@@ -9,13 +9,9 @@
 
 
 import os,sys,h5py,bisect,io,json
-code_dir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(f'{code_dir}/../../../../')
-from Utils import *
-from learning.datasets.pose_dataset import *
 
-
-
+from scenecomplete.modules.FoundationPose.Utils import *
+from scenecomplete.modules.FoundationPose.learning.datasets.pose_dataset import *
 
 class PairH5Dataset(torch.utils.data.Dataset):
   def __init__(self, cfg, h5_file, mode='train', max_num_key=None, cache_data=None):

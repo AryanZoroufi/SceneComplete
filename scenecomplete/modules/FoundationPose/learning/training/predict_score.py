@@ -15,13 +15,14 @@ import torch
 import torch.distributed as dist
 from omegaconf import OmegaConf
 from tqdm import tqdm
-code_dir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(f'{code_dir}/../../../')
-from learning.datasets.h5_dataset import *
-from learning.models.score_network import *
-from learning.datasets.pose_dataset import *
-from Utils import *
-from datareader import *
+
+import importlib.resources as pkg_resources
+import scenecomplete.modules.weights.fpose_weights as weights
+from scenecomplete.modules.FoundationPose.learning.datasets.h5_dataset import *
+from scenecomplete.modules.FoundationPose.learning.models.score_network import *
+from scenecomplete.modules.FoundationPose.learning.datasets.pose_dataset import *
+from scenecomplete.modules.FoundationPose.Utils import *
+from scenecomplete.modules.FoundationPose.datareader import *
 
 
 def vis_batch_data_scores(pose_data, ids, scores, pad_margin=5):
@@ -118,12 +119,9 @@ class ScorePredictor:
   def __init__(self, amp=True):
     self.amp = amp
     self.run_name = "2024-01-11-20-02-45"
-
     model_name = 'model_best.pth'
-    code_dir = os.path.dirname(os.path.realpath(__file__))
-    ckpt_dir = f'{code_dir}/../../weights/{self.run_name}/{model_name}'
-
-    self.cfg = OmegaConf.load(f'{code_dir}/../../weights/{self.run_name}/config.yml')
+    ckpt_dir = pkg_resources.files(weights) / self.run_name / model_name
+    self.cfg = OmegaConf.load(pkg_resources.files(weights) / self.run_name / 'config.yml')
 
     self.cfg['ckpt_dir'] = ckpt_dir
     self.cfg['enable_amp'] = True
