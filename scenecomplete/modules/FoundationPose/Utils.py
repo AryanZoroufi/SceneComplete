@@ -35,14 +35,13 @@ from scipy.spatial import cKDTree
 from collections import OrderedDict
 import ruamel.yaml
 yaml = ruamel.yaml.YAML()
-import scenecomplete.modules.FoundationPose.mycpp as mycpp
 
 try:
   import kornia
 except:
   kornia = None
 try:
-  import mycpp.build.mycpp as mycpp
+  import scenecomplete.modules.FoundationPose.mycpp.build.mycpp as mycpp
 except:
   mycpp = None
 try:

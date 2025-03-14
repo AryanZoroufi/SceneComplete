@@ -6,15 +6,12 @@
 # distribution of this software and related documentation without an express
 # license agreement from NVIDIA CORPORATION is strictly prohibited.
 
-
-from Utils import *
 import json,uuid,joblib,os,sys,argparse
-from datareader import *
-from estimater import *
-code_dir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(f'{code_dir}/mycpp/build')
 import yaml
 
+from scenecomplete.modules.FoundationPose.datareader import *
+from scenecomplete.modules.FoundationPose.estimater import *
+from scenecomplete.modules.FoundationPose.Utils import *
 
 def get_mask(reader, i_frame, ob_id, detect_type):
   if detect_type=='box':

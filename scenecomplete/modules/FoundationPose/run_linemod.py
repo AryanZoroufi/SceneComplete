@@ -15,13 +15,10 @@ import multiprocessing
 from functools import partial
 from itertools import repeat
 import itertools
-from datareader import *
-from estimater import *
-code_dir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(f'{code_dir}/mycpp/build')
 import yaml
 
-
+from scenecomplete.modules.FoundationPose.datareader import *
+from scenecomplete.modules.FoundationPose.estimater import *
 
 def get_mask(reader, i_frame, ob_id, detect_type):
   if detect_type=='box':
