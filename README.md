@@ -97,6 +97,8 @@ python scenecomplete/segmentation/segment_objects.py \
 ```
 provide example data in the data folder 
 
+## Visualization scripts
+
 ## Contributing to SceneComplete
 We encourage swapping modules for better performance:
 
