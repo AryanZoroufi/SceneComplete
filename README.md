@@ -88,6 +88,11 @@ If you don't have an OpenAI account, you can use any of the other VLMs such as C
 
 ## Sample Usage ()
 ### Sample prompt usage
+```bash
+python scenecomplete/scripts/python/prompting/generate_scene_prompts.py"
+   --image_path $scdirpath/rgb.png \
+   --output_filepath $scdirpath/prompts.txt
+```
 
 
 ```bash
