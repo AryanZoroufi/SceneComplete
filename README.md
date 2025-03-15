@@ -87,6 +87,9 @@ If you don't have an OpenAI account, you can use any of the other VLMs such as C
 
 
 ## Sample Usage ()
+### Sample prompt usage
+
+
 ```bash
 python scenecomplete/segmentation/segment_objects.py \
     --image_path data/samples/scene_full_image.png \
