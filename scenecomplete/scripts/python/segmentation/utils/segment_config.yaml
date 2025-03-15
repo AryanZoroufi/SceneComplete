@@ -1,11 +1,11 @@
 groundingdino:
   config_file: "/home/aditya/Research/phd/code/SceneComplete/modules/Grounded-Segment-Anything/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
-  checkpoint: "/home/aditya/Research/phd/code/SceneComplete/modules/weights/grounding_dino_weights/groundingdino_swint_ogc.pth"
+  checkpoint: "/home/aditya/Research/phd/code/SceneComplete/modules/weights/groundingdino_swint_ogc.pth"
   box_threshold: 0.3
   text_threshold: 0.25
 
 sam:
   version: "vit_h"
-  checkpoint: "/home/aditya/Research/phd/code/SceneComplete/modules/weights/sam_weights/sam_vit_h_4b8939.pth"
+  checkpoint: "/home/aditya/Research/phd/code/SceneComplete/modules/weights/sam_vit_h_4b8939.pth"
 
 device: "cuda"

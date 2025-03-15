@@ -168,5 +168,8 @@ Desktop.ini
 
 # Specific folders that need to be ignored
 data/*
-scenecomplete/modules/weights/*
+scenecomplete/modules/weights/pose_estimation_weights
+scenecomplete/modules/weights/inpainting_weights
+scenecomplete/modules/weights/sam_vit_h_4b8939.pth
+scenecomplete/modules/weights/groundingdino_swint_ogc.pth
 scenecomplete/modules/BrushNet/data/*

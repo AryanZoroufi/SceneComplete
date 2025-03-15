@@ -63,20 +63,30 @@ SceneComplete addresses the following steps to produce a **high-fidelity** scene
 
 1. **Clone & Update Submodules**  
    ```bash
-   git clone https://github.com/YourUsername/SceneComplete.git
+   git clone https://github.com/skymanaditya1/SceneComplete.git
    cd SceneComplete
    git submodule update --init --recursive
    pip install -e .
 
 2. **Download Pretrained Weights**
+Weights are required for the following folders -- grounded-segmentation (segmentation and dino weights)
+BrushNet model -- are these weights downloaded automatically?
+image-to-3D -- are these weights downloaded automatically?
+dino-vit-features for matching correspondences -- are these weights downloaded automatically? 
+object registration -- are these weights downloaded automatically? 
+
+Create a folder 
+
+The LoRA weights for the finetuned inpainting model would be provided shortly. In the meantime, we use the pretrained Brushnet model for inpainting. 
 
 3. **Setup OpenAI API Key for VLM**
+If you don't have an OpenAI account, you can use any of the other VLMs such as Claude or Gemini. 
 
 ## Modules & Pipelines
 
 
-## Sample Usage
-'''bash
+## Sample Usage ()
+```bash
 python scenecomplete/segmentation/segment_objects.py \
     --image_path data/samples/scene_full_image.png \
     --depth_path data/samples/scene_full_depth.png \
@@ -84,7 +94,8 @@ python scenecomplete/segmentation/segment_objects.py \
     --prompt_mask_mapping_filepath data/outputs/prompt_mask.txt \
     --save_dirpath data/outputs/seg_sam \
     --config_path segmentation/utils/segment_config.yaml
-
+```
+provide example data in the data folder 
 
 ## Contributing to SceneComplete
 We encourage swapping modules for better performance:
@@ -92,8 +103,10 @@ We encourage swapping modules for better performance:
 Replace BrushNet with another inpainting approach.
 Switch out InstantMesh for Zero123 or a new 2D→3D model.
 Adjust pose registration if you have a robust alternative.
+Better alternative for matching correspondences between images. 
 PRs are Welcome: If you improve or replace modules with stronger versions, please open a pull request – we’d love to incorporate better approaches or domain adaptations.
 
+Since SceneComplete provides an intelligent way of composing different models, this allows for flexibility in swapping different models or upgraded versions of existing models for better performance, as long as the input/output contract between different models is satisfied. 
 
 ## Citation
 @inproceedings{agarwal2024scenecomplete,

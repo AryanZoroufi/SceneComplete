@@ -15,6 +15,8 @@ import torch
 from diffusers import StableDiffusionBrushNetPipeline, BrushNetModel, UniPCMultistepScheduler
 from peft import PeftModel
 
+import importlib.resources as pkg_resources
+import scenecomplete.modules.weights.inpainting_weights as weights
 from scenecomplete.scripts.python.inpainting.utils.inpainting_utils import (
     set_random_seed,
     generate_brush_stroke_mask
@@ -23,7 +25,6 @@ from scenecomplete.scripts.python.inpainting.utils.inpainting_utils import (
 
 def main():
     parser = ArgumentParser(description="BrushNet-based inpainting with LoRA adaptation.")
-    # Basic arguments
     parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility.")
     parser.add_argument("--prompt_filepath", type=str, required=True,
                         help="Path to .txt file containing lines: prompt, image_path, mask_path, _, _")
@@ -31,9 +32,12 @@ def main():
                         help="Directory to save final results and inpainting debug output.")
 
     # Model / checkpoint arguments
-    parser.add_argument("--base_model_path", type=str, required=True,
+    base_model_path = pkg_resources.files(weights) / 'realisticVisionV60B1_v51VAE'
+    brushnet_model_path = pkg_resources.files(weights) / 'random_mask_brushnet_ckpt'
+    # lora_model_path = pkg_resources.files(weights) / 'lora_ckpt'
+    parser.add_argument("--base_model_path", type=str, required=True, default=base_model_path,
                         help="Path to the base SD model checkpoint used by BrushNet.")
-    parser.add_argument("--brushnet_model_path", type=str, required=True,
+    parser.add_argument("--brushnet_model_path", type=str, required=True, default=brushnet_model_path,
                         help="Path to the pretrained BrushNet model.")
     parser.add_argument("--lora_path", type=str, default=None,
                         help="Path to LoRA finetuned checkpoint (if not using pretrained).")

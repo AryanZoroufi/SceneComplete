@@ -15,7 +15,7 @@ import torch
 from omegaconf import OmegaConf
 
 import importlib.resources as pkg_resources
-import scenecomplete.modules.weights.fpose_weights as weights
+import scenecomplete.modules.weights.pose_estimation_weights as weights
 from scenecomplete.modules.FoundationPose.learning.models.refine_network import RefineNet
 from scenecomplete.modules.FoundationPose.learning.datasets.h5_dataset import *
 from scenecomplete.modules.FoundationPose.Utils import *
