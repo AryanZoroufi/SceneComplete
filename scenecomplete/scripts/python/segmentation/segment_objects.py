@@ -4,6 +4,8 @@ import cv2
 import numpy as np
 from PIL import Image
 
+import importlib.resources as pkg_resources
+import scenecomplete.scripts.python.segmentation.utils as utils
 from scenecomplete.scripts.python.segmentation.utils.segmentation_processor import get_masks_and_boxes
 from scenecomplete.scripts.python.segmentation.utils.segmentation_utils import (
     Segmentation,
@@ -74,7 +76,8 @@ if __name__ == '__main__':
                         help='Directory to save output images/masks')
     
     # GroundingDINO + SAM configuration
-    parser.add_argument('--config_path', type=str, default='utils/segment_config.yaml',
+    config_path = pkg_resources.files(utils) / 'segment_config.yaml'
+    parser.add_argument('--config_path', type=str, default=config_path,
                         help='Path to YAML config file for DINO/SAM parameters')
 
     # NMS + resizing configuration
@@ -114,13 +117,10 @@ if __name__ == '__main__':
     depth = cv2.imread(args.depth_path, cv2.IMREAD_UNCHANGED)
 
     # 4. Generate inpainting inputs, RGBA objects, etc.
-    inpaintings_dirpath = os.path.join(args.save_dirpath, 'sam_outputs')
-    os.makedirs(inpaintings_dirpath, exist_ok=True)
-
     prompt_mask_mapping_lines = get_inpainting_input(
         rgb_filepath=args.image_path,
         segmentations_list_filtered=segmentations_list_filtered,
-        save_dirpath=inpaintings_dirpath,
+        save_dirpath=args.save_dirpath,
         resize_ratio=args.resize_ratio,
         enlargement=args.enlargement,
         depth=depth
