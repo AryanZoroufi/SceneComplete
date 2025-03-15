@@ -81,7 +81,7 @@ def create_output_directories(base_output_path, config_name):
 
 def main():
     parser = argparse.ArgumentParser(description="InstantMesh-based 3D reconstruction pipeline.")
-    parser.add_argument('input_path', type=str, help='Path to thhe image directory.')
+    parser.add_argument('input_path', type=str, help='Path to the image directory.')
     parser.add_argument('--config', type=str, default='instant-mesh-base.yaml', help='Path to config file.')
     parser.add_argument('--output_path', type=str, default='imesh_outputs/', help='Output directory.')
     parser.add_argument('--diffusion_steps', type=int, default=75, help='Denoising Sampling steps.')
@@ -92,7 +92,6 @@ def main():
     parser.add_argument('--no_rembg', action='store_true', help='Skip background removal.')
     parser.add_argument('--export_texmap', action='store_true', help='Export a mesh with texture map.')
     parser.add_argument('--vis_mesh', action='store_true', help='Visualize the final mesh (requires Open3D).')
-    parser.add_argument('--save_triplanes', action='store_true', help='Save triplanes as numpy files.')
     args = parser.parse_args()
 
     # Set random seed
@@ -224,14 +223,12 @@ def main():
 
         print(f'[{idx+1}/{len(outputs)}] Creating {name} ...')
         with torch.no_grad():
-            # generate triplanes if required
-            if args.save_triplanes:
-                planes = model.forward_planes(images, sub_cameras)
+            planes = model.forward_planes(images, sub_cameras)
 
-                # save triplane
-                npy_path = os.path.join(triplane_path, f'{name}.npy')
-                np.save(npy_path, planes.cpu().numpy())
-                print(f"[INFO] Triplane saved to {npy_path}")
+            # save triplane
+            npy_path = os.path.join(triplane_path, f'{name}.npy')
+            np.save(npy_path, planes.cpu().numpy())
+            print(f"[INFO] Triplane saved to {npy_path}")
 
             # extract mesh
             mesh_obj_path = os.path.join(mesh_path, f'{name}.obj')

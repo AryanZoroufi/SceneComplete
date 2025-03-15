@@ -58,6 +58,7 @@ SceneComplete addresses the following steps to produce a **high-fidelity** scene
 
 ## Repository Structure
 
+# Setting up the data folder -- add the steps (add data folder in environment file)
 
 ## Setup & Installation
 
@@ -97,7 +98,27 @@ python scenecomplete/segmentation/segment_objects.py \
 ```
 provide example data in the data folder 
 
+### Sample inpainting usage
+```bash
+python scenecomplete/scripts/python/inpainting/inpaint_objects.py \
+   --prompt_filepath $scdirpath/prompt_mask_mapping.txt \
+   --output_dirpath $scdirpath/inpainting_outputs \
+   --blended \
+   --pretrained
+```
+
+### Sample Reconstruction usage 
+```bash
+python scenecomplete/scripts/python/reconstruction/generate_3d_mesh.py \
+   $scdirpath/grasp_data/imesh_inputs \
+   --output_path $scdirpath/imesh_outputs \
+   --export_texmap \
+   --no_rembg \
+   --seed 42
+```
+
 ## Visualization scripts
+
 
 ## Contributing to SceneComplete
 We encourage swapping modules for better performance:
