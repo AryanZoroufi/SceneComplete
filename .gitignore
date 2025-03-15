@@ -168,6 +168,7 @@ Desktop.ini
 
 # Specific folders that need to be ignored
 data/*
+requirements.txt
 scenecomplete/modules/weights/pose_estimation_weights
 scenecomplete/modules/weights/inpainting_weights
 scenecomplete/modules/weights/sam_vit_h_4b8939.pth
