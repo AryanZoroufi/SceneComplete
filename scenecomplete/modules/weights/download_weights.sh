@@ -4,11 +4,15 @@ echo "Downloading weights ..."
 
 POSE_ESTIMATION_WEIGHTS_DIR="./pose_estimation_weights"
 mkdir -p "$POSE_ESTIMATION_WEIGHTS_DIR"
+# Add an __init__.py file to the pose_estimation_weights directory
+touch "$POSE_ESTIMATION_WEIGHTS_DIR/__init__.py"
 
 INPAINTING_WEIGHTS_DIR="./inpainting_weights"
 BASE_MODEL_DIR=$INPAINTING_WEIGHTS_DIR/"realisticVisionV60B1_v51VAE"
 BRUSHNET_MODEL_DIR=$INPAINTING_WEIGHTS_DIR/"random_mask_brushnet_ckpt"
 mkdir -p "$INPAINTING_WEIGHTS_DIR"
+# Add an __init__.py file to the inpainting_weights directory
+touch "$INPAINTING_WEIGHTS_DIR/__init__.py"
 mkdir -p "$BASE_MODEL_DIR"
 mkdir -p "$BRUSHNET_MODEL_DIR"
 

@@ -35,9 +35,9 @@ def main():
     base_model_path = pkg_resources.files(weights) / 'realisticVisionV60B1_v51VAE'
     brushnet_model_path = pkg_resources.files(weights) / 'random_mask_brushnet_ckpt'
     # lora_model_path = pkg_resources.files(weights) / 'lora_ckpt'
-    parser.add_argument("--base_model_path", type=str, required=True, default=base_model_path,
+    parser.add_argument("--base_model_path", type=str, default=base_model_path,
                         help="Path to the base SD model checkpoint used by BrushNet.")
-    parser.add_argument("--brushnet_model_path", type=str, required=True, default=brushnet_model_path,
+    parser.add_argument("--brushnet_model_path", type=str, default=brushnet_model_path,
                         help="Path to the pretrained BrushNet model.")
     parser.add_argument("--lora_path", type=str, default=None,
                         help="Path to LoRA finetuned checkpoint (if not using pretrained).")
