@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # scenecomplete/scripts/install_all.sh
-#
 
-#    bash scenecomplete/scripts/install_all.sh
+# Usage: `bash scenecomplete/scripts/install_all.sh`
 
 # Initialize conda in the script
 echo "Initializing conda"
@@ -43,6 +42,8 @@ pip install rembg==2.0.56 pytorch-lightning==2.0 omegaconf==2.3.0 einops==0.7.0 
 pip install git+https://github.com/NVlabs/nvdiffrast/
 pip install open3d==0.18.0
 
+# For downloading weights from Google drive
+pip install gdown
 
 echo "[INFO] All packages installed successfully!"
 echo "[INFO] You can now 'conda activate scenecomplete' to use your environment."

@@ -1,137 +1,141 @@
 # SceneComplete
 
-**SceneComplete** is an *open-world 3D scene completion system*, that constructs a complete, segmented, 3D model of a scene from a single RGB-D image. SceneComplete provides a framework for intelligently composing multiple large pre-trained models – vision-language, segmentation, inpainting, image-to-3D, correspondence-based scaling, and 6D pose estimation – to generate high-quality, fully completed 3D object meshes, each registered in the global scene coordinate frame. 
+### [🌐 Project Website](https://scenecomplete.github.io) | [📝 Paper](https://arxiv.org/pdf/2410.23643v1) | [🎥 Video](https://www.youtube.com/watch?v=Tuzhn4HWiL0)
+
+**SceneComplete** is an *open-world 3D scene completion system*, that constructs a complete, segmented, 3D model of a scene from a single RGB-D image. SceneComplete is a framework for intelligently composing multiple large pre-trained models – vision-language, segmentation, inpainting, image-to-3D, correspondence-based scaling, and 6D pose estimation – to generate high-quality, fully completed 3D object meshes, each registered in the global scene coordinate frame. 
 
 Please read the official paper for a detailed overview of our work. 
 > **SceneComplete: Open-World 3D Scene Completion in Complex Real-World Environments for Robot Manipulation**  
 > Aditya Agarwal, Gaurav Singh, Bipasha Sen, Tomás Lozano-Pérez, Leslie Pack Kaelbling (2024)  
 > [arXiv:2410.23643v2]()
 
-## Table of Contents
+-----
 
-1. [Overview](#overview)
-2. [Repository Structure](#repository-structure)
-3. [Setup & Installation](#setup--installation)
-4. [Modules & Pipelines](#modules--pipelines)
-   - [1. Vision-Language Model (VLM)](#1-vision-language-model-vlm)
-   - [2. Segmentation](#2-segmentation)
-   - [3. 2D Image Inpainting](#3-2d-image-inpainting)
-   - [4. Image-to-3D](#4-image-to-3d)
-   - [5. DINO Dense Correspondence for Scale Estimation](#5-dino-dense-correspondence-for-scale-estimation)
-   - [6. Pose Registration (6D)](#6-pose-registration-6d)
-5. [Submodules & Model Weights](#submodules--model-weights)
-6. [OpenAI API Key for VLM](#openai-api-key-for-vlm)
-7. [Sample Usage](#sample-usage)
-8. [Updating Modules & Contributing](#updating-modules--contributing)
-9. [Limitations](#limitations)
-10. [Citations](#citations)
+**Table of Contents**
 
----
-
-## Overview
-
-SceneComplete addresses the following steps to produce a **high-fidelity** scene reconstruction from **one** RGB-D view:
-
-1. **VLM-based Labeling**  
-   - Uses a large Vision-Language Model (e.g., ChatGPT + image prompting) to identify objects and generate short text labels like “blue bowl,” “banana,” “grey mug,” etc.
-
-2. **Segmentation**  
-   - For each text label, a grounded-segmentation model (e.g., Grounded-DINO + SAM) extracts object masks from the input image.
-
-3. **Inpainting**  
-   - Each object mask is individually inpainted using a 2D diffusion/BrushNet pipeline to fill in occluded regions.
-
-4. **Image-to-3D**  
-   - The inpainted 2D object images are passed to a model (like InstantMesh or Zero123-like) to produce a **completed** 3D mesh for each object.
-
-5. **Scale Estimation using DINO**  
-   - The system uses **dense correspondences** (via dino-vit-features) to match the partial real scene points to the synthetic object model, solving for a uniform scale factor.
-
-6. **Pose Registration**  
-   - A final 6D pose for each object is found via a pre-trained predictor (e.g., FoundationPose), aligning each scaled mesh with the real partial scan in world coordinates.
-
-**Result**: A fully-segmented, completed 3D mesh for each object in the scene, ready for downstream manipulation, planning, or collision avoidance.
-
-**Reference**: For details, see the accompanying paper “SceneComplete: Open-World 3D Scene Completion in Complex Real-World Environments for Robot Manipulation”  :contentReference[oaicite:1]{index=1}.
-
----
-
-## Repository Structure
-
-# Setting up the data folder -- add the steps (add data folder in environment file)
-
-## Setup & Installation
-
-1. **Clone & Update Submodules**  
-   ```bash
-   git clone https://github.com/skymanaditya1/SceneComplete.git
-   cd SceneComplete
-   # create conda environment 
-   conda create -n scenecomplete python=3.9 -y
-   conda activate scenecomplete
-   git submodule update --init --recursive
-   pip install -e .
-
-2. **Download Pretrained Weights**
-Weights are required for the following folders -- grounded-segmentation (segmentation and dino weights)
-BrushNet model -- are these weights downloaded automatically?
-image-to-3D -- are these weights downloaded automatically?
-dino-vit-features for matching correspondences -- are these weights downloaded automatically? 
-object registration -- are these weights downloaded automatically? 
-
-Create a folder 
-
-The LoRA weights for the finetuned inpainting model would be provided shortly. In the meantime, we use the pretrained Brushnet model for inpainting. 
-
-3. **Setup OpenAI API Key for VLM**
-If you don't have an OpenAI account, you can use any of the other VLMs such as Claude or Gemini. 
-
-## Modules & Pipelines
+- [Installation](#installation)
+- [Usage](#usage)
+   - [Downloading Pretrained Weights](#download-pretrained-weights)
+   - [Setting up Environment Variables](#setup-environment-variables)
+   - [Testing Individual Modules](#testing-individual-modules)
+   - [Running SceneComplete](#running-scenecomplete)
+   - [Visualizing Output](#visualizing-output)
+- [Limitations & Contributing to SceneComplete](#limitations-and-contributing)
+- [Citations](#citations)
 
 
-## Sample Usage ()
-### Sample prompt usage
+## Installation
+#### 1. Setup conda environment
 ```bash
-python scenecomplete/scripts/python/prompting/generate_scene_prompts.py"
+# We recommend using conda to manage your environments
+conda create -n scenecomplete python=3.9
+conda activate scenecomplete
+```
+
+#### 2. Clone and install SceneComplete
+```bash
+git clone https://github.com/skymanaditya1/SceneComplete.git
+cd SceneComplete
+git submodule update --init --recursive
+```
+
+#### 3. Install submodule dependencies
+We provide a script to download and setup submodule dependencies automatically
+```bash
+pip install -e .
+bash scenecomplete/scripts/install_all.sh
+```
+
+## Usage
+### Downloading Pretrained Weights
+We provide a script to download the pretrained weights of individual submodules. 
+
+```bash
+cd scenecomplete/modules/weights
+bash download_weights.sh
+```
+
+This will automatically download and place the checkpoints in their respective directories. Google restricts large file downloads via scripts. If you encounter issues while downloading pretrained checkpoints, follow the steps in the `download_weights.sh` file. 
+
+We finetune BrushNet using LoRA to adapt its performance on tabletop objects. We anticipate releasing the LoRA weights in the next few days. In the meantime, we use the pretrained BrushNet model for inpainting. 
+
+### Setting up Environment Variables
+```bash
+# Set your datasets path
+export scdirpath="<your datasets path>"
+
+# Create your OpenAI API Key (https://platform.openai.com/api-keys) and add the secret as an environment variable.
+export OPENAI_API_KEY="<your key>"
+```
+
+### Testing Individual Modules
+We provide examples to test individual modules. 
+#### Prompting
+```bash
+python scenecomplete/scripts/python/prompting/generate_scene_prompts.py \
    --image_path $scdirpath/rgb.png \
    --output_filepath $scdirpath/prompts.txt
 ```
 
-
+#### Segmentation
 ```bash
-python scenecomplete/segmentation/segment_objects.py \
-    --image_path data/samples/scene_full_image.png \
-    --depth_path data/samples/scene_full_depth.png \
-    --prompts_filepath data/samples/prompts.txt \
-    --prompt_mask_mapping_filepath data/outputs/prompt_mask.txt \
-    --save_dirpath data/outputs/seg_sam \
-    --config_path segmentation/utils/segment_config.yaml
+python scenecomplete/scripts/python/segmentation/segment_objects.py \
+   --image_path $scdirpath/rgb.png \
+   --depth_path $scdirpath/depth.png \
+   --prompts_filepath $scdirpath/prompts.txt \
+   --prompt_mask_mapping_filepath $scdirpath/prompt_mask_mapping.txt \
+   --save_dirpath $scdirpath/sam_outputs
 ```
-provide example data in the data folder 
 
-### Sample inpainting usage
+#### Inpainting
 ```bash
 python scenecomplete/scripts/python/inpainting/inpaint_objects.py \
+   --seed 42 \
    --prompt_filepath $scdirpath/prompt_mask_mapping.txt \
    --output_dirpath $scdirpath/inpainting_outputs \
-   --blended \
-   --pretrained
+   --use_pretrained \
+   --blended
 ```
 
-### Sample Reconstruction usage 
+#### Reconstruction
 ```bash
 python scenecomplete/scripts/python/reconstruction/generate_3d_mesh.py \
-   $scdirpath/grasp_data/imesh_inputs \
+   $scdirpath/imesh_inputs \
    --output_path $scdirpath/imesh_outputs \
-   --export_texmap \
+   --seed 42 \
    --no_rembg \
-   --seed 42
+   --export_texmap
 ```
 
-## Visualization scripts
+#### Scaling
+```bash
+python scenecomplete/scripts/python/scaling/compute_mesh_scaling.py \
+   --segmentation_dirpath $scdirpath/ \
+   --imesh_outputs $scdirpath/imesh_outputs \
+   --output_dirpath $scdirpath/registered_meshes
+```
 
+#### Registration
+```bash
+python scenecomplete/scripts/python/registration/register_mesh.py \
+   --imesh_outputs $scdirpath/imesh_outputs \
+   --segmentation_dirpath $scdirpath/
+   --obj_scale_mapping $scdirpath/obj_scale_mapping.txt \
+   --output_dirpath $scdirpath/fpose_outputs
+```
 
-## Contributing to SceneComplete
+### Running SceneComplete
+```bash
+bash scenecomplete/scripts/bash/scenecomplete.sh 
+```
+
+### Visualizing Output
+```
+
+```
+
+## Limitations & Contributing to SceneComplete
+
 We encourage swapping modules for better performance:
 
 Replace BrushNet with another inpainting approach.
@@ -143,6 +147,7 @@ PRs are Welcome: If you improve or replace modules with stronger versions, pleas
 Since SceneComplete provides an intelligent way of composing different models, this allows for flexibility in swapping different models or upgraded versions of existing models for better performance, as long as the input/output contract between different models is satisfied. 
 
 ## Citation
+```
 @inproceedings{agarwal2024scenecomplete,
   title={{SceneComplete}: Open-World 3D Scene Completion in Complex Real-World Environments for Robot Manipulation},
   author={Agarwal, Aditya and Singh, Gaurav and Sen, Bipasha and Lozano-P{\'e}rez, Tom{\'a}s and Kaelbling, Leslie Pack},
@@ -150,3 +155,4 @@ Since SceneComplete provides an intelligent way of composing different models, t
   archivePrefix={arXiv},
   eprint={2410.23643v2}
 }
+```
