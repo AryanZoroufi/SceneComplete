@@ -36,7 +36,7 @@ echo "Downloading BrushNet weights..."
 gdown --folder 1hCYIjeRGx3Zk9WZtQf0s3nDGfeiwqTsN -O "$BRUSHNET_MODEL_DIR"
 gdown --folder 1dQeSFqpQg_NSFLhd3ChuSJCZ0zCSquh8 -O "$BASE_MODEL_DIR"
 
-echo "Google restricts file downloads. If you encounter an error while downloading the weights, access the files from your browser using the links below:"
+echo "Google restricts file downloads. If you encounter an error while downloading the weights, access and download the files from your browser using the links below:"
 echo "https://drive.google.com/drive/folders/1hCYIjeRGx3Zk9WZtQf0s3nDGfeiwqTsN and name the folder as 'random_mask_brushnet_ckpt'"
 echo "https://drive.google.com/drive/folders/1dQeSFqpQg_NSFLhd3ChuSJCZ0zCSquh8 and name the folder as 'realisticVisionV60B1_v51VAE'"
 
@@ -44,7 +44,7 @@ echo "https://drive.google.com/drive/folders/1dQeSFqpQg_NSFLhd3ChuSJCZ0zCSquh8 a
 echo "Downloading FoundationPose weights..."
 gdown --folder 1DFezOAD0oD1BblsXVxqDsl8fj0qzB82i -O "$POSE_ESTIMATION_WEIGHTS_DIR"
 
-echo "Google restricts file downloads. If you encounter an error while downloading the weights, access the files from your browser using the link below:"
+echo "Google restricts file downloads. If you encounter an error while downloading the weights, access and download the files from your browser using the link below:"
 echo "https://drive.google.com/drive/folders/1DFezOAD0oD1BblsXVxqDsl8fj0qzB82i and name the folder as 'pose_estimation_weights'"
 
 echo "All weights downloaded successfully!"
