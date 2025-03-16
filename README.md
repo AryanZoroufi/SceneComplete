@@ -69,7 +69,8 @@ export OPENAI_API_KEY="<your key>"
 ```
 
 ### Testing Individual Modules
-We provide examples to test individual modules. 
+We provide examples to test each module individually. However, since each module depends on the output of the previous step, they must be executed in sequence.
+
 #### Prompting
 ```bash
 python scenecomplete/scripts/python/prompting/generate_scene_prompts.py \
@@ -95,6 +96,14 @@ python scenecomplete/scripts/python/inpainting/inpaint_objects.py \
    --output_dirpath $scdirpath/inpainting_outputs \
    --use_pretrained \
    --blended
+```
+
+#### Segmentation post Inpainting
+```bash
+python scenecomplete/scripts/python/segmentation/segment_objects_post_inpainting.py \
+   --input_dirpath $scdirpath/inpainting_outputs \
+   --prompt_mask_mapping_filepath $scdirpath/prompt_mask_mapping.txt \
+   --save_dirpath $scdirpath/sam_post_processed
 ```
 
 #### Reconstruction
