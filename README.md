@@ -59,6 +59,7 @@ pip install torch==2.0.0 torchvision==0.15.1 torchaudio==2.0.1 --index-url https
 
 # Install GCC 11 (to the conda env)
 conda install -c conda-forge gcc=11 gxx=11
+# check the installed versions using `gcc -v` and `g++ -v`
 
 # Add conda lib path to your LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/home/<username>/miniconda3/envs/foundationpose/lib:$LD_LIBRARY_PATH
@@ -75,6 +76,9 @@ python -m pip install -r requirements.txt
 python -m pip install --quiet --no-cache-dir git+https://github.com/NVlabs/nvdiffrast.git
 python -m pip install --quiet --no-cache-dir kaolin==0.15.0 -f https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.0.0_cu118.html
 python -m pip install --quiet --no-index --no-cache-dir pytorch3d -f https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py39_cu118_pyt200/download.html
+
+# Install Boost
+conda install boost-cpp
 
 # Build extensions, ensure that your CONDA_PREFIX points to your miniconda3 setup (e.g., /home/<username>/miniconda3)
 CMAKE_PREFIX_PATH=$CONDA_PREFIX/lib/python3.9/site-packages/pybind11/share/cmake/pybind11 bash build_all_conda.sh
