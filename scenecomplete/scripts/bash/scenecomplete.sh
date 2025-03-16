@@ -38,12 +38,10 @@ python scenecomplete/scripts/python/segmentation/segment_objects_post_inpainting
 echo "Preparing the input for reconstruction"
 python scenecomplete/scripts/python/reconstruction/utils/prepare_3d_inputs.py \
     --segmentation_dirpath $scdirpath/sam_outputs \
-    --inpainting_dirpath $scdirpath/inpainting_outputs \
+    --inpainting_dirpath $scdirpath/sam_post_processed \
     --out_path $scdirpath/grasp_data \
     --scene_rgb_filepath $scdirpath/rgb.png \
     --scene_depth_filepath $scdirpath/depth.png \
     --intrinsics_path $scdirpath/cam_K.txt \
 
-
-echo "Running 3D reconstruction"
 
