@@ -62,3 +62,14 @@ python scenecomplete/scripts/python/scaling/compute_mesh_scaling.py \
     --output_filepath $scdirpath/obj_scale_mapping.txt \
     --instant_mesh_model instant-mesh-base \
     --camera_name realsense
+
+
+echo "Computing 6D poses to register the object meshes to the scene"
+echo "Activating the foundationpose conda environment"
+conda activate foundationpose
+python scenecomplete/scripts/python/registration/register_mesh.py \
+    --imesh_outputs $scdirpath/imesh_outputs \
+    --segmentation_dirpath $scdirpath/grasp_data \
+    --obj_scale_mapping $scdirpath/obj_scale_mapping.txt \
+    --instant_mesh_model instant-mesh-base \
+    --output_dirpath $scdirpath/registered_meshes

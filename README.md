@@ -46,6 +46,44 @@ pip install -e .
 bash scenecomplete/scripts/install_all.sh
 ```
 
+### 4. Install FoundationPose dependencies
+```bash
+# Create foundationpose conda environment
+conda create -n foundationpose python=3.9
+conda activate foundationpose
+
+# Install cuda-toolkit in your conda environment
+conda install cuda -c nvidia/label/cuda-11.8.0
+# Install torch for CUDA 11.8
+pip install torch==2.0.0 torchvision==0.15.1 torchaudio==2.0.1 --index-url https://download.pytorch.org/whl/cu118
+
+# Install GCC 11 (to the conda env)
+conda install -c conda-forge gcc=11 gxx=11
+
+# Add conda lib path to your LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/home/<username>/miniconda3/envs/foundationpose/lib:$LD_LIBRARY_PATH
+
+# Install Eigen3 3.4.0 under conda environment
+conda install conda-forge::eigen=3.4.0
+export CMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH:/eigen/path/under/conda" (e.g., "/home/<username>/miniconda3/envs/foundationpose/include/eigen3")
+
+# Install dependencies
+cd scenecomplete/modues/FoundationPose
+python -m pip install -r requirements.txt
+
+# Install NVDiffRast, Kaolin, and PyTorch3D
+python -m pip install --quiet --no-cache-dir git+https://github.com/NVlabs/nvdiffrast.git
+python -m pip install --quiet --no-cache-dir kaolin==0.15.0 -f https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.0.0_cu118.html
+python -m pip install --quiet --no-index --no-cache-dir pytorch3d -f https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py39_cu118_pyt200/download.html
+
+# Build extensions, ensure that your CONDA_PREFIX points to your miniconda3 setup (e.g., /home/<username>/miniconda3)
+CMAKE_PREFIX_PATH=$CONDA_PREFIX/lib/python3.9/site-packages/pybind11/share/cmake/pybind11 bash build_all_conda.sh
+
+# Finally, install SceneComplete as a python package
+cd ../../..
+pip install -e .
+```
+
 ## Usage
 ### Downloading Pretrained Weights
 We provide a script to download the pretrained weights of individual submodules. 
