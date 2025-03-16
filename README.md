@@ -184,13 +184,15 @@ python scenecomplete/scripts/python/scaling/compute_mesh_scaling.py \
 ```bash
 python scenecomplete/scripts/python/registration/register_mesh.py \
    --imesh_outputs $scdirpath/imesh_outputs \
-   --segmentation_dirpath $scdirpath/
+   --segmentation_dirpath $scdirpath/grasp_data \
    --obj_scale_mapping $scdirpath/obj_scale_mapping.txt \
-   --output_dirpath $scdirpath/fpose_outputs
+   --instant_mesh_model instant-mesh-base \
+   --output_dirpath $scdirpath/registered_meshes
 ```
 
 ### Running SceneComplete
 ```bash
+# TODO: add experiment_id as parameter
 bash scenecomplete/scripts/bash/scenecomplete.sh 
 ```
 
