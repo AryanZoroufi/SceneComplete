@@ -213,7 +213,16 @@ PRs are Welcome: If you improve or replace modules with stronger versions, pleas
 
 Since SceneComplete provides an intelligent way of composing different models, this allows for flexibility in swapping different models or upgraded versions of existing models for better performance, as long as the input/output contract between different models is satisfied. 
 
-## Citation
+## Acknowledgements
+We thank the authors of the following projects for their wonderful and open-source code:
+
+- [InstantMesh](https://github.com/TencentARC/InstantMesh)
+- [FoundationPose](https://github.com/NVlabs/FoundationPose)
+- [BrushNet](https://github.com/TencentARC/BrushNet)
+- [Grounded-Segment-Anything](https://github.com/IDEA-Research/Grounded-Segment-Anything)
+- [dino-vit-features](https://github.com/ShirAmir/dino-vit-features)
+
+## 🤝🏼 Cite Us
 ```
 @inproceedings{agarwal2024scenecomplete,
   title={{SceneComplete}: Open-World 3D Scene Completion in Complex Real-World Environments for Robot Manipulation},
