@@ -120,7 +120,8 @@ python scenecomplete/scripts/python/reconstruction/utils/prepare_3d_inputs.py \
 #### Reconstruction
 ```bash
 python scenecomplete/scripts/python/reconstruction/generate_3d_mesh.py \
-   $scdirpath/imesh_inputs \
+   $scdirpath/grasp_data/imesh_inputs \
+   --config instant-mesh-base.yaml \
    --output_path $scdirpath/imesh_outputs \
    --seed 42 \
    --no_rembg \
