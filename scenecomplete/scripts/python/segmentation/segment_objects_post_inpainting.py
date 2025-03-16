@@ -5,6 +5,8 @@ import cv2
 import numpy as np
 from PIL import Image
 
+import importlib.resources as pkg_resources
+import scenecomplete.scripts.python.segmentation.utils as utils
 from scenecomplete.scripts.python.segmentation.utils.segmentation_processor import get_individual_mask
 from scenecomplete.scripts.python.segmentation.utils.segmentation_utils import (
     load_config,
@@ -51,7 +53,8 @@ def main():
                         help='Ratio for resizing the foreground RGBA image.')
 
     # GroundingDINO + SAM configuration
-    parser.add_argument('--config_path', type=str, default='utils/segment_config.yaml',
+    config_path = pkg_resources.files(utils) / 'segment_config.yaml'
+    parser.add_argument('--config_path', type=str, default=config_path,
                         help='Path to YAML config file for DINO/SAM parameters')
 
     args = parser.parse_args()

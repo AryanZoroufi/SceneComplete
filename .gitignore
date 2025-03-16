@@ -174,3 +174,5 @@ scenecomplete/modules/weights/inpainting_weights
 scenecomplete/modules/weights/sam_vit_h_4b8939.pth
 scenecomplete/modules/weights/groundingdino_swint_ogc.pth
 scenecomplete/modules/BrushNet/data/*
+
+pending.txt

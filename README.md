@@ -55,7 +55,7 @@ cd scenecomplete/modules/weights
 bash download_weights.sh
 ```
 
-This will automatically download and place the checkpoints in their respective directories. Google restricts large file downloads via scripts. If you encounter issues while downloading pretrained checkpoints, follow the steps in the `download_weights.sh` file. 
+This will automatically download and place the checkpoints in their respective directories. Google restricts large file downloads via scripts. If you encounter issues while downloading pretrained checkpoints, follow the steps in the `download_weights.sh` file. Huggingface weights required by the individual modules are downloaded automatically when the code is run for the first time. 
 
 We finetune BrushNet using LoRA to adapt its performance on tabletop objects. We anticipate releasing the LoRA weights in the next few days. In the meantime, we use the pretrained BrushNet model for inpainting. 
 
