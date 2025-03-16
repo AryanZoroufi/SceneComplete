@@ -29,10 +29,21 @@ python scenecomplete/scripts/python/inpainting/inpaint_objects.py \
 
 echo "Running segmentation post-inpainting"
 python scenecomplete/scripts/python/segmentation/segment_objects_post_inpainting.py \
-    --input_dirpath 
+    --input_dirpath $scdirpath/inpainting_outputs \
     --prompt_mask_mapping_filepath $scdirpath/prompt_mask_mapping.txt \
-    --save_dirpath $scdirpath/sam_outputs_post_inpainting
+    --save_dirpath $scdirpath/sam_post_processed
     --resize_ratio 0.85
 
 
+echo "Preparing the input for reconstruction"
+python scenecomplete/scripts/python/reconstruction/utils/prepare_3d_inputs.py \
+    --segmentation_dirpath $scdirpath/sam_outputs \
+    --inpainting_dirpath $scdirpath/inpainting_outputs \
+    --out_path $scdirpath/grasp_data \
+    --scene_rgb_filepath $scdirpath/rgb.png \
+    --scene_depth_filepath $scdirpath/depth.png \
+    --intrinsics_path $scdirpath/cam_K.txt \
+
+
 echo "Running 3D reconstruction"
+

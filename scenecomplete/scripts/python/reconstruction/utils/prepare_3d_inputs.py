@@ -14,7 +14,7 @@ from argparse import ArgumentParser
 
 def main():
     parser = ArgumentParser(description="Prepare inputs for image-to-3D reconstruction.")
-    parser.add_argument('--dir_path', type=str, required=True,
+    parser.add_argument('--segmentation_dirpath', type=str, required=True,
                         help="Directory containing segmented object files (RGB, depth, mask).")
     parser.add_argument('--inpainting_dirpath', type=str, required=True,
                         help="Directory containing inpainted RGBA files (e.g., <idx>_rgba_inpainting.png).")
@@ -25,7 +25,7 @@ def main():
     parser.add_argument('--scene_depth_filepath', type=str, required=True,
                         help="Path to the full-scene depth image.")
     parser.add_argument('--intrinsics_path', type=str, required=True,
-                        help="Path to a .npy file containing the camera intrinsics.")
+                        help="Path to the .txt file containing the camera intrinsics.")
 
     args = parser.parse_args()
 
@@ -58,17 +58,17 @@ def main():
     np.savetxt(cam_txt_path, K_matrix)
     print(f"[INFO] Saved intrinsics TXT to: {cam_txt_path}")
 
-    # 2) Identify all object indices by scanning for *_segmented_object.png in dir_path
-    seg_obj_files = [f for f in os.listdir(args.dir_path) if f.endswith('_segmented_object.png')]
+    # 2) Identify all object indices by scanning for *_segmented_object.png in segmentation_dirpath
+    seg_obj_files = [f for f in os.listdir(args.segmentation_dirpath) if f.endswith('_segmented_object.png')]
     # Each filename is something like "<index>_segmented_object.png"
     indices = [int(osp.splitext(fn)[0].split('_')[0]) for fn in seg_obj_files]
     print(f"[INFO] Found object indices: {indices}")
 
     # 3) For each index, copy the corresponding files to out_path
     for idx in indices:
-        rgb_path = osp.join(args.dir_path, f'{idx}_segmented_object.png')
-        depth_path = osp.join(args.dir_path, f'{idx}_segmented_depth.png')
-        mask_path = osp.join(args.dir_path, f'{idx}_object_mask.png')
+        rgb_path = osp.join(args.segmentation_dirpath, f'{idx}_segmented_object.png')
+        depth_path = osp.join(args.segmentation_dirpath, f'{idx}_segmented_depth.png')
+        mask_path = osp.join(args.segmentation_dirpath, f'{idx}_object_mask.png')
         inpainted_rgba_path = osp.join(args.inpainting_dirpath, f'{idx}_rgba_inpainting.png')
 
         masked_rgb_dest = osp.join(args.out_path, f"{idx}_masked.png")
