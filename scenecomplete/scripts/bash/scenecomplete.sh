@@ -54,3 +54,11 @@ python scenecomplete/scripts/python/reconstruction/generate_3d_mesh.py \
     --no_rembg \
     --export_texmap
 
+
+echo "Computing scaling by estimating correspondences"
+python scenecomplete/scripts/python/scaling/compute_mesh_scaling.py \
+    --segmentation_dirpath $scdirpath/grasp_data \
+    --imesh_outputs $scdirpath/imesh_outputs \
+    --output_filepath $scdirpath/obj_scale_mapping.txt \
+    --instant_mesh_model instant-mesh-base \
+    --camera_name realsense

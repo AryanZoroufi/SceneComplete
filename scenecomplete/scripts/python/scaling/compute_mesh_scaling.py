@@ -139,8 +139,8 @@ def main():
                         help="Directory containing segmentation masks.")
     parser.add_argument("--imesh_outputs", type=str, default="imesh_outputs",
                         help="Directory containing reconstruction outputs.")
-    parser.add_argument("--output_dirpath", type=str, required=True,
-                        help="Directory to store scaled meshes.")
+    parser.add_argument("--output_filepath", type=str, default="obj_scale_mapping.txt",
+                        help="Filepath to save the scale mapping.")
     parser.add_argument("--instant_mesh_model", type=str, default="instant-mesh-base",
                         help="Name of the Instant Mesh model.")
     parser.add_argument("--camera_name", type=str, default="realsense",
@@ -151,12 +151,9 @@ def main():
     args = parser.parse_args()
     DEBUG = args.debug
 
-    os.makedirs(args.output_dirpath, exist_ok=True)
-
     # Build directories
     instant_mesh_model = args.instant_mesh_model
     instant_mesh_dirpath = osp.join(args.imesh_outputs, instant_mesh_model)
-    segmentation_data_dirpath = args.segmentation_dirpath
 
     # Sort objects by numeric ID
     images_dir = osp.join(instant_mesh_dirpath, 'images')
@@ -177,7 +174,7 @@ def main():
     for obj_id in obj_ids:
         scale = compute_scaling_for_object(
             instant_mesh_dirpath=instant_mesh_dirpath,
-            segmentation_data_dirpath=segmentation_data_dirpath,
+            segmentation_data_dirpath=args.segmentation_dirpath,
             obj_id=obj_id,
             debug=DEBUG
         )
@@ -193,12 +190,11 @@ def main():
             obj_scale_mapping[k] = avg_scale
 
     # Write results
-    scale_txt_path = osp.join(args.output_dirpath, "obj_scale_mapping.txt")
-    with open(scale_txt_path, "w") as f:
+    with open(args.output_filepath, "w") as f:
         for key, val in obj_scale_mapping.items():
             f.write(f"{key}:{val}\n")
 
-    print(f"[INFO] Scale mapping saved to {scale_txt_path}")
+    print(f"[INFO] Scale mapping saved to {args.output_filepath}")
 
 
 if __name__ == "__main__":

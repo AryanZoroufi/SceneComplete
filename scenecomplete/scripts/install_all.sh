@@ -43,7 +43,7 @@ pip install git+https://github.com/NVlabs/nvdiffrast/
 pip install open3d==0.18.0
 
 # For downloading weights from Google drive
-pip install gdown
+pip install gdown ninja
 
 echo "[INFO] All packages installed successfully!"
 echo "[INFO] You can now 'conda activate scenecomplete' to use your environment."

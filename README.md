@@ -131,9 +131,11 @@ python scenecomplete/scripts/python/reconstruction/generate_3d_mesh.py \
 #### Scaling
 ```bash
 python scenecomplete/scripts/python/scaling/compute_mesh_scaling.py \
-   --segmentation_dirpath $scdirpath/ \
+   --segmentation_dirpath $scdirpath/grasp_data \
    --imesh_outputs $scdirpath/imesh_outputs \
-   --output_dirpath $scdirpath/registered_meshes
+   --output_filepath $scdirpath/obj_scale_mapping.txt \
+   --instant_mesh_model instant-mesh-base
+   --camera_name realsense
 ```
 
 #### Registration
