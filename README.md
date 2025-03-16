@@ -66,6 +66,9 @@ SceneComplete addresses the following steps to produce a **high-fidelity** scene
    ```bash
    git clone https://github.com/skymanaditya1/SceneComplete.git
    cd SceneComplete
+   # create conda environment 
+   conda create -n scenecomplete python=3.9 -y
+   conda activate scenecomplete
    git submodule update --init --recursive
    pip install -e .
 

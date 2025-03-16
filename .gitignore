@@ -167,7 +167,7 @@ Desktop.ini
 *.key
 
 # Specific folders that need to be ignored
-data/*
+data/test_data
 requirements.txt
 scenecomplete/modules/weights/pose_estimation_weights
 scenecomplete/modules/weights/inpainting_weights
