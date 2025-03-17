@@ -86,6 +86,8 @@ CMAKE_PREFIX_PATH=$CONDA_PREFIX/lib/python3.9/site-packages/pybind11/share/cmake
 # Finally, install SceneComplete as a python package
 cd ../../..
 pip install -e .
+
+# Troubleshooting: If you face issues related to nvdiffrast, try copying the contents of your lib folder to the lib64 folder in your conda environment.
 ```
 
 ## Usage

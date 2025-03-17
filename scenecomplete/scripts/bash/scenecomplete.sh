@@ -73,3 +73,6 @@ python scenecomplete/scripts/python/registration/register_mesh.py \
     --obj_scale_mapping $scdirpath/obj_scale_mapping.txt \
     --instant_mesh_model instant-mesh-base \
     --output_dirpath $scdirpath/registered_meshes
+
+
+echo "SceneComplete run successfully"

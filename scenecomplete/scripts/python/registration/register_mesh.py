@@ -158,7 +158,7 @@ def main():
     colors_3d = (color[valid] / 255.0).astype(np.float32)
 
     pcd = numpy_to_open3d_cloud(points_3d, colors_3d)
-    out_ply_path = os.path.join(args.output_dirpath, f"{obj_index}_scene_complete.ply")
+    out_ply_path = os.path.join(args.output_dirpath, "scene_complete.ply")
     o3d.io.write_point_cloud(out_ply_path, pcd)
 
     logging.info(f"Scene pointcloud saved to {out_ply_path}")
