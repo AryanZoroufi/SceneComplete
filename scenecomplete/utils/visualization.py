@@ -8,7 +8,6 @@ def visualize_scene_with_objects(obj_folder_path):
     
     Args:
         obj_folder_path (str): Path to folder containing obj files
-        scene_ply_path (str): Path to the scene ply file
     """
     # Create visualizer
     vis = o3d.visualization.Visualizer()

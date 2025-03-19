@@ -194,13 +194,23 @@ python scenecomplete/scripts/python/registration/register_mesh.py \
 
 ### Running SceneComplete
 ```bash
-# TODO: add experiment_id as parameter
-bash scenecomplete/scripts/bash/scenecomplete.sh 
+# Run with auto-generated experiment ID (format: YYYYMMDD_HHMMSS)
+bash scenecomplete/scripts/bash/scenecomplete.sh
+
+# Or run with a custom experiment ID
+bash scenecomplete/scripts/bash/scenecomplete.sh <experiment_id>
 ```
 
 ### Visualizing Output
-```
+```bash
+# To visualize the scene pointcloud along with the reconstructed objects:
+python scenecomplete/utils/visualization.py \
+   --obj_folder $scdirpath/registered_meshes
 
+# To visualize the input scene pointcloud
+python scenecomplete/utils/visualize_pointcloud.py \
+   --folder_path $scdirpath \
+   --visualize
 ```
 
 ## Limitations & Contributing to SceneComplete
@@ -211,7 +221,7 @@ Replace BrushNet with another inpainting approach.
 Switch out InstantMesh for Zero123 or a new 2D→3D model.
 Adjust pose registration if you have a robust alternative.
 Better alternative for matching correspondences between images. 
-PRs are Welcome: If you improve or replace modules with stronger versions, please open a pull request – we’d love to incorporate better approaches or domain adaptations.
+PRs are Welcome: If you improve or replace modules with stronger versions, please open a pull request – we'd love to incorporate better approaches or domain adaptations.
 
 Since SceneComplete provides an intelligent way of composing different models, this allows for flexibility in swapping different models or upgraded versions of existing models for better performance, as long as the input/output contract between different models is satisfied. 
 
