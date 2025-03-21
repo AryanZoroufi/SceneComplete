@@ -119,3 +119,4 @@ if __name__ == "__main__":
     
     # visualize_scene_with_objects(args.mesh_dirpath)
     visualize_objs_scene_pcd(args.mesh_dirpath)
+    visualize_colored_meshes(args.mesh_dirpath)

@@ -27,6 +27,8 @@ run_3d_reconstruction=true
 run_mesh_scaling=true
 run_registration=true
 
+perform_cleanup=false
+
 
 if [ "$run_prompting" = true ]; then
     echo "Generating scene prompts"
@@ -107,6 +109,18 @@ if [ "$run_registration" = true ]; then
         --obj_scale_mapping $experiment_dir/obj_scale_mapping.txt \
         --instant_mesh_model instant-mesh-base \
         --output_dirpath $experiment_dir/registered_meshes
+fi
+
+if [ "$perform_cleanup" = true ]; then
+    echo "Performing cleanup"
+    rm -rf $experiment_dir/grasp_data
+    rm -rf $experiment_dir/imesh_outputs
+    rm -rf $experiment_dir/inpainting_outputs
+    rm -rf $experiment_dir/sam_outputs
+    rm -rf $experiment_dir/sam_post_processed
+    rm $experiment_dir/obj_scale_mapping.txt
+    rm $experiment_dir/prompt_mask_mapping.txt
+    rm $experiment_dir/prompts.txt
 fi
 
 echo "SceneComplete run successfully"
