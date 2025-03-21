@@ -18,28 +18,28 @@ echo "Activating the scenecomplete environment"
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate scenecomplete
 
-run_prompting=false
-run_segmentation=false
-run_inpainting=false
-run_segmentation_post_inpainting=false
-prepare_3d_inputs=false
-run_3d_reconstruction=false
-run_mesh_scaling=false
+run_prompting=true
+run_segmentation=true
+run_inpainting=true
+run_segmentation_post_inpainting=true
+prepare_3d_inputs=true
+run_3d_reconstruction=true
+run_mesh_scaling=true
 run_registration=true
 
 
 if [ "$run_prompting" = true ]; then
     echo "Generating scene prompts"
     python scenecomplete/scripts/python/prompting/generate_scene_prompts.py \
-        --image_path $scdirpath/rgb.png \
+        --image_path $scdirpath/inputs/rgb.png \
         --output_filepath $experiment_dir/prompts.txt
 fi
 
 if [ "$run_segmentation" = true ]; then
     echo "Running segmentation"
     python scenecomplete/scripts/python/segmentation/segment_objects.py \
-    --image_path $scdirpath/rgb.png \
-    --depth_path $scdirpath/depth.png \
+    --image_path $scdirpath/inputs/rgb.png \
+    --depth_path $scdirpath/inputs/depth.png \
     --prompts_filepath $experiment_dir/prompts.txt \
     --prompt_mask_mapping_filepath $experiment_dir/prompt_mask_mapping.txt \
     --save_dirpath $experiment_dir/sam_outputs
@@ -71,9 +71,9 @@ if [ "$prepare_3d_inputs" = true ]; then
         --segmentation_dirpath $experiment_dir/sam_outputs \
         --inpainting_dirpath $experiment_dir/sam_post_processed \
         --out_path $experiment_dir/grasp_data \
-        --scene_rgb_filepath $scdirpath/rgb.png \
-        --scene_depth_filepath $scdirpath/depth.png \
-        --intrinsics_path $scdirpath/cam_K.txt
+        --scene_rgb_filepath $scdirpath/inputs/rgb.png \
+        --scene_depth_filepath $scdirpath/inputs/depth.png \
+        --intrinsics_path $scdirpath/inputs/cam_K.txt
 fi
 
 if [ "$run_3d_reconstruction" = true ]; then

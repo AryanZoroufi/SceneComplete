@@ -231,6 +231,7 @@ def main():
             print(f"[INFO] Triplane saved to {npy_path}")
 
             # extract mesh
+            print(f"[INFO] Extracting mesh for {name} ...")
             mesh_obj_path = os.path.join(mesh_path, f'{name}.obj')
             mesh_out = model.extract_mesh(
                 planes,
