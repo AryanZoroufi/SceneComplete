@@ -171,6 +171,8 @@ def main():
             brushnet_conditioning_scale=brushnet_conditioning_scale
         ).images[0]
 
+        image = result_image # in case blending is not required
+
         # 8. Blend the results if required
         if args.blended:
             print("[INFO] Blending final inpainted result with original image.")
@@ -224,7 +226,6 @@ def main():
                 image_pasted = init_image_np * (1.0 - mask_np) + image_np_resized * mask_np
                 image_pasted = image_pasted.astype(image_np.dtype)
                 image = Image.fromarray(image_pasted)
-
 
         # 9) Save final output
         extension = osp.splitext(image_path)[1]
