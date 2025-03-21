@@ -4,6 +4,8 @@
 
 **SceneComplete** is an *open-world 3D scene completion system*, that constructs a complete, segmented, 3D model of a scene from a single RGB-D image. SceneComplete is a framework for intelligently composing multiple large pre-trained models – vision-language, segmentation, inpainting, image-to-3D, correspondence-based scaling, and 6D pose estimation – to generate high-quality, fully completed 3D object meshes, each registered in the global scene coordinate frame. 
 
+![](data/scenecomplete_architecture.gif)
+
 Please read the official paper for a detailed overview of our work. 
 > **SceneComplete: Open-World 3D Scene Completion in Complex Real-World Environments for Robot Manipulation**  
 > Aditya Agarwal, Gaurav Singh, Bipasha Sen, Tomás Lozano-Pérez, Leslie Pack Kaelbling (2024)  
@@ -13,18 +15,18 @@ Please read the official paper for a detailed overview of our work.
 
 **Table of Contents**
 
-- [Installation](#installation)
-- [Usage](#usage)
+- [🛠️ Installation](#installation)
+- [🚀 Usage](#usage)
    - [Downloading Pretrained Weights](#download-pretrained-weights)
    - [Setting up Environment Variables](#setup-environment-variables)
-   - [Testing Individual Modules](#testing-individual-modules)
    - [Running SceneComplete](#running-scenecomplete)
    - [Visualizing Output](#visualizing-output)
-- [Limitations & Contributing to SceneComplete](#limitations-and-contributing)
-- [Citations](#citations)
+- [🫶 Limitations & Contributing to SceneComplete](#limitations-and-contributing)
+- [💖 Acknowledgements](#acknowledgements)
+- [📜 Cite Us](#citations)
 
 
-## Installation
+## 🛠️ Installation
 #### 1. Setup conda environment
 ```bash
 # We recommend using conda to manage your environments
@@ -90,7 +92,7 @@ pip install -e .
 # Troubleshooting: If you face issues related to nvdiffrast, try copying the contents of your lib folder to the lib64 folder in your conda environment.
 ```
 
-## Usage
+## 🚀 Usage
 ### Downloading Pretrained Weights
 We provide a script to download the pretrained weights of individual submodules. 
 
@@ -112,120 +114,55 @@ export scdirpath="<your datasets path>"
 export OPENAI_API_KEY="<your key>"
 ```
 
-### Testing Individual Modules
-We provide examples to test each module individually. However, since each module depends on the output of the previous step, they must be executed in sequence.
-
-#### Prompting
-```bash
-python scenecomplete/scripts/python/prompting/generate_scene_prompts.py \
-   --image_path $scdirpath/rgb.png \
-   --output_filepath $scdirpath/prompts.txt
-```
-
-#### Segmentation
-```bash
-python scenecomplete/scripts/python/segmentation/segment_objects.py \
-   --image_path $scdirpath/rgb.png \
-   --depth_path $scdirpath/depth.png \
-   --prompts_filepath $scdirpath/prompts.txt \
-   --prompt_mask_mapping_filepath $scdirpath/prompt_mask_mapping.txt \
-   --save_dirpath $scdirpath/sam_outputs
-```
-
-#### Inpainting
-```bash
-python scenecomplete/scripts/python/inpainting/inpaint_objects.py \
-   --seed 42 \
-   --prompt_filepath $scdirpath/prompt_mask_mapping.txt \
-   --output_dirpath $scdirpath/inpainting_outputs \
-   --use_pretrained \
-   --blended
-```
-
-#### Segmentation post Inpainting
-```bash
-python scenecomplete/scripts/python/segmentation/segment_objects_post_inpainting.py \
-   --input_dirpath $scdirpath/inpainting_outputs \
-   --prompt_mask_mapping_filepath $scdirpath/prompt_mask_mapping.txt \
-   --save_dirpath $scdirpath/sam_post_processed
-```
-
-#### Preparing 3D inputs
-```bash
-python scenecomplete/scripts/python/reconstruction/utils/prepare_3d_inputs.py \
-   --segmentation_dirpath $scdirpath/sam_outputs \
-   --inpainting_dirpath $scdirpath/sam_post_processed \
-   --out_path $scdirpath/grasp_data \
-   --scene_rgb_filepath $scdirpath/rgb.png \
-   --scene_depth_filepath $scdirpath/depth.png \
-   --intrinsics_path $scdirpath/cam_K.txt
-```
-
-#### Reconstruction
-```bash
-python scenecomplete/scripts/python/reconstruction/generate_3d_mesh.py \
-   $scdirpath/grasp_data/imesh_inputs \
-   --config instant-mesh-base.yaml \
-   --output_path $scdirpath/imesh_outputs \
-   --seed 42 \
-   --no_rembg \
-   --export_texmap
-```
-
-#### Scaling
-```bash
-python scenecomplete/scripts/python/scaling/compute_mesh_scaling.py \
-   --segmentation_dirpath $scdirpath/grasp_data \
-   --imesh_outputs $scdirpath/imesh_outputs \
-   --output_filepath $scdirpath/obj_scale_mapping.txt \
-   --instant_mesh_model instant-mesh-base
-   --camera_name realsense
-```
-
-#### Registration
-```bash
-python scenecomplete/scripts/python/registration/register_mesh.py \
-   --imesh_outputs $scdirpath/imesh_outputs \
-   --segmentation_dirpath $scdirpath/grasp_data \
-   --obj_scale_mapping $scdirpath/obj_scale_mapping.txt \
-   --instant_mesh_model instant-mesh-base \
-   --output_dirpath $scdirpath/registered_meshes
-```
-
 ### Running SceneComplete
+To run SceneComplete, you need to provide an RGB-D image of the scene along with the camera intrinsics. 
+#### 1. Prepare input folder:
+Create a folder called `inputs` inside the path you set earlier using $scdirpath, such that your inputs folder is located at `$scdirpath/inputs`.
+
+Add the following files to your inputs folder:
+
+- `rgb.png`: RGB image of the scene 
+- `depth.png`: Corresponding depth image
+- `cam_K.txt`: A text file containing the 3x3 camera intrinsic matrix
+
+#### 2. Run the SceneComplete system:
+
 ```bash
-# Run with auto-generated experiment ID (format: YYYYMMDD_HHMMSS)
+# Run the scenecomplete bash script to run the pipeline
 bash scenecomplete/scripts/bash/scenecomplete.sh
 
 # Or run with a custom experiment ID
 bash scenecomplete/scripts/bash/scenecomplete.sh <experiment_id>
 ```
 
-### Visualizing Output
+This will create a folder at $scdirpath/<experiment_id> containing the intermediate and final outputs in `registered_meshes`.
+
+### Visualizing Outputs
+To visualize the reconstructed scene along with the input partial pointcloud,
+
 ```bash
-# To visualize the scene pointcloud along with the reconstructed objects:
 python scenecomplete/utils/visualization.py \
-   --obj_folder $scdirpath/registered_meshes
+   --mesh_dirpath $scdirpath/registered_meshes
 
 # To visualize the input scene pointcloud
 python scenecomplete/utils/visualize_pointcloud.py \
-   --folder_path $scdirpath \
+   --folder_path $scdirpath/inputs \
    --visualize
 ```
 
-## Limitations & Contributing to SceneComplete
+## 🫶 Limitations & Contributing to SceneComplete
+### Limitations
+While SceneComplete achieves strong results across diverse real-world scenes, it is built by composing and adapting many large pre-trained modules - making it susceptible to cascading errors. We highlight key limitations and areas for improvement:
+- `Prompting & Segmentation`: The vision-language model (VLM) occasionally fails to detect all objects in the scene, resulting in missed reconstructions. Tuning prompts or re-prompting are some strategies that can help recover missing hypotheses. Grounded-SAM infrequently segemnts both an object and its subparts, or merge multiple cluttered objects into one. We apply IoU-based de-deduplication to mitigate such errors, but further improvements are possible especially with newer models. 
+- `Inpainting`: We currently inpaint objects in isolation, removing the context from othe surrounding scene, and using other detected objects as the infilling mask. We also adapt the model on tabletop objects using LoRA, without losing the generalization. Better strategies for building the infilling mask and providing contextual cues may exist. 
+- `Image-to-3D Reconstruction`: Though these models offer remarkable performance, they sometimes fail to generate plausible reconstructions especially when images are given in highly unusual viewpoints. 
+- `Scaling`: Our scaling strategy assume isotropic scaling. In some cases, non-uniform scaling would better match object geometry and should be explored. Newer & more performant models could also be used for matching keypoint correspondences, for better scaling. 
+- `Registration`: Pose registration may struggle with texture-less objects that lack discriminativefeatures. It also depends on accurate scaling to some extent — if the scale is off, registration quality may degrade. 
 
-We encourage swapping modules for better performance:
+### Contributing to SceneComplete
+SceneComplete is a modular framework, designed with flexibility in mind. Each model can be independently improved or replaced with newer and more efficient models, as long as the input/output interfaces are preserved. We `encourage contributions` from the community to help improve the system, and `welcome pull requests`! 
 
-Replace BrushNet with another inpainting approach.
-Switch out InstantMesh for Zero123 or a new 2D→3D model.
-Adjust pose registration if you have a robust alternative.
-Better alternative for matching correspondences between images. 
-PRs are Welcome: If you improve or replace modules with stronger versions, please open a pull request – we'd love to incorporate better approaches or domain adaptations.
-
-Since SceneComplete provides an intelligent way of composing different models, this allows for flexibility in swapping different models or upgraded versions of existing models for better performance, as long as the input/output contract between different models is satisfied. 
-
-## Acknowledgements
+## 💖 Acknowledgements
 We thank the authors of the following projects for their wonderful and open-source code:
 
 - [InstantMesh](https://github.com/TencentARC/InstantMesh)
@@ -234,7 +171,7 @@ We thank the authors of the following projects for their wonderful and open-sour
 - [Grounded-Segment-Anything](https://github.com/IDEA-Research/Grounded-Segment-Anything)
 - [dino-vit-features](https://github.com/ShirAmir/dino-vit-features)
 
-## 🤝🏼 Cite Us
+## 📜 Cite Us
 ```
 @inproceedings{agarwal2024scenecomplete,
   title={{SceneComplete}: Open-World 3D Scene Completion in Complex Real-World Environments for Robot Manipulation},
