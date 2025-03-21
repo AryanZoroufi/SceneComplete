@@ -2,7 +2,7 @@
 
 ### [🌐 Project Website](https://scenecomplete.github.io) | [📝 Paper](https://arxiv.org/pdf/2410.23643v1) | [🎥 Video](https://www.youtube.com/watch?v=Tuzhn4HWiL0)
 
-**SceneComplete** is an *open-world 3D scene completion system*, that constructs a complete, segmented, 3D model of a scene from a single RGB-D image. SceneComplete is a framework for intelligently composing multiple large pre-trained models – vision-language, segmentation, inpainting, image-to-3D, correspondence-based scaling, and 6D pose estimation – to generate high-quality, fully completed 3D object meshes, each registered in the global scene coordinate frame. 
+**SceneComplete** is an *open-world 3D scene completion system*, that constructs a complete, segmented, 3D model of a scene from a single RGB-D image.
 
 ![](data/scenecomplete_architecture.gif)
 
