@@ -108,28 +108,24 @@ def load_camera_intrinsics(k_path: str, downscale: float = 1.0) -> np.ndarray:
 
 
 def transform_and_export_mesh(
-    mesh_path: str,
-    scale_factor: float,
+    mesh: trimesh.Trimesh,
     transform_pose: np.ndarray,
     out_obj_path: str,
     debug: bool = False
 ) -> None:
     """
-    Load a mesh (.obj) from disk, apply scale and transformation,
+    Load a mesh (.obj) from disk, and apply transformation,
     then export to a new .obj. Also handles rotating bounding boxes if desired.
 
     Args:
-        mesh_path (str): Path to the .obj file.
-        scale_factor (float): Uniform scale to apply to the mesh.
+        mesh (trimesh.Trimesh): The mesh to transform.
         transform_pose (np.ndarray): 4x4 matrix to transform the mesh in place.
         out_obj_path (str): Where to save the new .obj file.
         debug (bool): If True, print debug info.
     """
-    mesh = trimesh.load(mesh_path)
     if debug:
         print(f"[DEBUG] Original mesh has {len(mesh.vertices)} vertices.")
 
-    mesh.apply_scale(scale_factor)
     mesh.apply_transform(transform_pose)
 
     mesh.export(out_obj_path)

@@ -109,6 +109,7 @@ def main():
         K = load_camera_intrinsics(camk_filepath, downscale=1.0)
 
         mesh = trimesh.load(mesh_file)
+        mesh.apply_scale(scale_factor)
         mesh_vertices = mesh.vertices
         mesh_vertex_normals = mesh.vertex_normals
 
@@ -127,11 +128,10 @@ def main():
         # Get the pose
         init_pose = est.register(K=K, rgb=color, depth=depth, ob_mask=mask, iteration=args.est_refine_iter)
 
-        # Apply the scale and transformation to the mesh
+        # Apply the transformation to the mesh
         out_obj_path = os.path.join(args.output_dirpath, f"{obj_index}.obj")
         transform_and_export_mesh(
-            mesh_file,
-            scale_factor=scale_factor,
+            mesh=mesh.copy(),
             transform_pose=init_pose,
             out_obj_path=out_obj_path,
             debug=debug
