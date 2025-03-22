@@ -9,7 +9,7 @@ Script runs InstantMesh-based image-to-3D reconstruction model.
 - Exports texture map and or/saves video of the renders. 
 
 Example usage:
-    python generate_3d_mesh.py configs/instant-mesh-base.yaml ../imesh_inputs \
+    python generate_3d_mesh.py configs/instant-mesh-large.yaml ../imesh_inputs \
         --output_path ../outputs \
         --seed 42 \
         -- no_rembg \
@@ -82,7 +82,7 @@ def create_output_directories(base_output_path, config_name):
 def main():
     parser = argparse.ArgumentParser(description="InstantMesh-based 3D reconstruction pipeline.")
     parser.add_argument('input_path', type=str, help='Path to the image directory.')
-    parser.add_argument('--config', type=str, default='instant-mesh-base.yaml', help='Path to config file.')
+    parser.add_argument('--config', type=str, default='instant-mesh-large.yaml', help='Path to config file.')
     parser.add_argument('--output_path', type=str, default='imesh_outputs/', help='Output directory.')
     parser.add_argument('--diffusion_steps', type=int, default=75, help='Denoising Sampling steps.')
     parser.add_argument('--seed', type=int, default=42, help='Random seed for sampling.')

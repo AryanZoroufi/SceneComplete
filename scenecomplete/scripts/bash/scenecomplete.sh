@@ -82,7 +82,7 @@ if [ "$run_3d_reconstruction" = true ]; then
     echo "Running 3D reconstruction"
     python scenecomplete/scripts/python/reconstruction/generate_3d_mesh.py \
         $experiment_dir/grasp_data/imesh_inputs \
-        --config instant-mesh-base.yaml \
+        --config instant-mesh-large.yaml \
         --output_path $experiment_dir/imesh_outputs \
         --seed 42 \
         --no_rembg \
@@ -95,7 +95,7 @@ if [ "$run_mesh_scaling" = true ]; then
         --segmentation_dirpath $experiment_dir/grasp_data \
         --imesh_outputs $experiment_dir/imesh_outputs \
         --output_filepath $experiment_dir/obj_scale_mapping.txt \
-        --instant_mesh_model instant-mesh-base \
+        --instant_mesh_model instant-mesh-large \
         --camera_name realsense
 fi
 
@@ -107,7 +107,7 @@ if [ "$run_registration" = true ]; then
         --imesh_outputs $experiment_dir/imesh_outputs \
         --segmentation_dirpath $experiment_dir/grasp_data \
         --obj_scale_mapping $experiment_dir/obj_scale_mapping.txt \
-        --instant_mesh_model instant-mesh-base \
+        --instant_mesh_model instant-mesh-large \
         --output_dirpath $experiment_dir/registered_meshes
 fi
 

@@ -141,7 +141,7 @@ def main():
                         help="Directory containing reconstruction outputs.")
     parser.add_argument("--output_filepath", type=str, default="obj_scale_mapping.txt",
                         help="Filepath to save the scale mapping.")
-    parser.add_argument("--instant_mesh_model", type=str, default="instant-mesh-base",
+    parser.add_argument("--instant_mesh_model", type=str, default="instant-mesh-large",
                         help="Name of the Instant Mesh model.")
     parser.add_argument("--camera_name", type=str, default="realsense",
                         help="Name of the camera.")

@@ -40,7 +40,7 @@ def main():
                         help="Directory containing the scene's full images and mask files, etc.")
     parser.add_argument('--obj_scale_mapping', type=str, required=True,
                         help="Path to the 'obj_idx:scale_value' mapping file.")
-    parser.add_argument("--instant_mesh_model", type=str, default="instant-mesh-base",
+    parser.add_argument("--instant_mesh_model", type=str, default="instant-mesh-large",
                         help="Name of the Instant Mesh model.")
     parser.add_argument('--est_refine_iter', type=int, default=5, help="Pose refinement iterations.")
     parser.add_argument('--track_refine_iter', type=int, default=2, help="(Unused) Additional refine iterations.")
