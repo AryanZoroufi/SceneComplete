@@ -15,15 +15,15 @@ Please read the official paper for a detailed overview of our work.
 
 **Table of Contents**
 
-- [🛠️ Installation](#installation)
-- [🚀 Usage](#usage)
-   - [Downloading Pretrained Weights](#download-pretrained-weights)
-   - [Setting up Environment Variables](#setup-environment-variables)
+- [🛠️ Installation](#🛠️-installation)
+- [🚀 Usage](#🚀-usage)
+   - [Downloading Pretrained Weights](#downloading-pretrained-weights)
+   - [Setting up Environment Variables](#setting-up-environment-variables)
    - [Running SceneComplete](#running-scenecomplete)
-   - [Visualizing Output](#visualizing-output)
-- [🫶 Limitations & Contributing to SceneComplete](#limitations-and-contributing)
-- [💖 Acknowledgements](#acknowledgements)
-- [📜 Cite Us](#citations)
+   - [Visualizing Outputs](#visualizing-outputs)
+- [🫶 Limitations and Contributing to SceneComplete](#🫶-limitations-and-contributing-to-scenecomplete)
+- [💖 Acknowledgements](#💖-acknowledgements)
+- [📜 Cite Us](#📜-cite-us)
 
 
 ## 🛠️ Installation
@@ -150,7 +150,7 @@ python scenecomplete/utils/visualize_pointcloud.py \
    --visualize
 ```
 
-## 🫶 Limitations & Contributing to SceneComplete
+## 🫶 Limitations and Contributing to SceneComplete
 ### Limitations
 While SceneComplete achieves strong results across diverse real-world scenes, it is built by composing and adapting many large pre-trained modules - making it susceptible to cascading errors. We highlight key limitations and areas for improvement:
 - `Prompting & Segmentation`: The vision-language model (VLM) occasionally fails to detect all objects in the scene, resulting in missed reconstructions. Tuning prompts or re-prompting are some strategies that can help recover missing hypotheses. Grounded-SAM infrequently segemnts both an object and its subparts, or merge multiple cluttered objects into one. We apply IoU-based de-deduplication to mitigate such errors, but further improvements are possible especially with newer models. 
