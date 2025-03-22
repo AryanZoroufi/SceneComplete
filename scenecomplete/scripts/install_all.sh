@@ -7,8 +7,7 @@
 echo "Initializing conda"
 source ~/miniconda3/bin/activate # replace with anaconda if you are using anaconda
 
-# 1) Create & activate conda env
-conda create -n scenecomplete python=3.9 -y
+# 1) Activate conda env
 conda activate scenecomplete
 
 # 2) Install the top-level "scenecomplete" package in editable mode

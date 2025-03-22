@@ -44,7 +44,6 @@ git submodule update --init --recursive
 #### 3. Install submodule dependencies
 We provide a script to download and setup submodule dependencies automatically
 ```bash
-pip install -e .
 bash scenecomplete/scripts/install_all.sh
 ```
 
@@ -71,7 +70,7 @@ conda install conda-forge::eigen=3.4.0
 export CMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH:/eigen/path/under/conda" (e.g., "/home/<username>/miniconda3/envs/foundationpose/include/eigen3")
 
 # Install dependencies
-cd scenecomplete/modues/FoundationPose
+cd scenecomplete/modules/FoundationPose
 python -m pip install -r requirements.txt
 
 # Install NVDiffRast, Kaolin, and PyTorch3D
