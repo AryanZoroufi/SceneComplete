@@ -36,7 +36,7 @@ conda activate scenecomplete
 
 #### 2. Clone and install SceneComplete
 ```bash
-git clone https://github.com/skymanaditya1/SceneComplete.git
+git clone https://github.com/scenecomplete/SceneComplete.git
 cd SceneComplete
 git submodule update --init --recursive
 ```
