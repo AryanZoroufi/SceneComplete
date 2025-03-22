@@ -15,15 +15,15 @@ Please read the official paper for a detailed overview of our work.
 
 **Table of Contents**
 
-- [🛠️ Installation](#🛠️-installation)
-- [🚀 Usage](#🚀-usage)
+- [🛠️ Installation](#-installation)
+- [🚀 Usage](#-usage)
    - [Downloading Pretrained Weights](#downloading-pretrained-weights)
    - [Setting up Environment Variables](#setting-up-environment-variables)
    - [Running SceneComplete](#running-scenecomplete)
    - [Visualizing Outputs](#visualizing-outputs)
-- [🫶 Limitations and Contributing to SceneComplete](#🫶-limitations-and-contributing-to-scenecomplete)
-- [💖 Acknowledgements](#💖-acknowledgements)
-- [📜 Cite Us](#📜-cite-us)
+- [🫶 Limitations and Contributing to SceneComplete](#-limitations-and-contributing-to-scenecomplete)
+- [💖 Acknowledgements](#-acknowledgements)
+- [📜 Cite Us](#-cite-us)
 
 
 ## 🛠️ Installation
