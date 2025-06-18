@@ -13,6 +13,11 @@ Please read the official paper for a detailed overview of our work.
 
 -----
 
+## Update 
+We will soon release the finetuned inpainting model, addressing known issues with the default version. We have also made engineering improvements to mitigate missing objects due to segmentation and VLM failures (an updated prompt template and reprompting fixes most issues). We will release those updates shortly. 
+
+-----
+
 **Table of Contents**
 
 - [🛠️ Installation](#-installation)
