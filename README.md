@@ -177,11 +177,10 @@ We thank the authors of the following projects for their wonderful and open-sour
 
 ## 📜 Cite Us
 ```
-@inproceedings{agarwal2024scenecomplete,
-  title={{SceneComplete}: Open-World 3D Scene Completion in Complex Real-World Environments for Robot Manipulation},
+@article{agarwal2024scenecomplete,
+  title={SceneComplete: Open-World 3D Scene Completion in Complex Real World Environments for Robot Manipulation},
   author={Agarwal, Aditya and Singh, Gaurav and Sen, Bipasha and Lozano-P{\'e}rez, Tom{\'a}s and Kaelbling, Leslie Pack},
-  year={2024},
-  archivePrefix={arXiv},
-  eprint={2410.23643v2}
+  journal={arXiv preprint arXiv:2410.23643},
+  year={2024}
 }
 ```
