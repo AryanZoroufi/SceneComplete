@@ -4,22 +4,22 @@
 # Usage: `bash scenecomplete/scripts/install_all.sh`
 
 # Initialize conda in the script
-echo "Initializing conda"
-source ~/miniconda3/bin/activate # replace with anaconda if you are using anaconda
+# echo "Initializing conda"
+# source ~/miniconda3/bin/activate # replace with anaconda if you are using anaconda
 
-# 1) Activate conda env
-conda activate scenecomplete
+# # 1) Activate conda env
+# conda activate scenecomplete
 
 # 2) Install the top-level "scenecomplete" package in editable mode
 pip install -e .
 
-# 3) GPU stuff
-echo "Installing CUDA 11.8.0"
-conda install cuda -c nvidia/label/cuda-11.8.0 -y
+# # 3) GPU stuff
+# echo "Installing CUDA 11.8.0"
+# conda install cuda -c nvidia/label/cuda-11.8.0 -y
 
-# 4) PyTorch & Torchvision (for cu118)
-echo "Installing PyTorch and related dependencies"
-pip install torch==2.1.0+cu118 torchvision==0.16.0+cu118 torchaudio==2.1.0+cu118 --index-url https://download.pytorch.org/whl/cu118
+# # 4) PyTorch & Torchvision (for cu118)
+# echo "Installing PyTorch and related dependencies"
+# pip install torch==2.1.0+cu118 torchvision==0.16.0+cu118 torchaudio==2.1.0+cu118 --index-url https://download.pytorch.org/whl/cu118
 
 # 5) GroundedSegmentAnything dependencies
 echo "Installing GroundedSegmentAnything dependencies"
